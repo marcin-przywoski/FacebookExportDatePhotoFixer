@@ -7,7 +7,6 @@ This application is used to embed dates (Creation Time, Last Access Time, Last W
 I've created it as there was no tool available for easy use that allowed to instantly embed dates from Messenger HTML files back into saved media and copy them to another location to keep original files in place.  
 In case of any issues just post a new issue and I'll fix it - it will be a great opportunity for learning.
 ## Installation 
-TEST
 Download the repository and compile it by yourself in VS Code or VS or download the compiled package from the Packages section
 
 ## Requirements
