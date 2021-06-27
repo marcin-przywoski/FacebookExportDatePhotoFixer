@@ -1,5 +1,6 @@
 # Facebook Export Date Fixer
 
+[![CI](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/actions/workflows/CI.yml/badge.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/actions/workflows/CI.yml)
 [![build](https://img.shields.io/github/downloads/marcin-przywoski/FacebookExportDatePhotoFixer/total.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
 [![build](https://img.shields.io/github/v/release/marcin-przywoski/FacebookExportDatePhotoFixer)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
 
