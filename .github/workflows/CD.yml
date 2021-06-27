@@ -1,0 +1,49 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.3
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 5.0.x
+          
+      - name: Build & publish (GUI)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/ --configuration Release
+
+      - name: Pack (GUI)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/Archive.zip -Force
+        shell: pwsh
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            [Changelog](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/blob/master/Changelog.md)
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset (GUI)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: acebookExportDatePhotoFixer/bin/Publish/Archive.zip
+          asset_name: acebookExportDatePhotoFixer.zip
+          asset_content_type: application/zip
