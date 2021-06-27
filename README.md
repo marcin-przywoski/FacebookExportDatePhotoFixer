@@ -1,8 +1,8 @@
 # Facebook Export Date Fixer
 
 [![CI](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/actions/workflows/CI.yml/badge.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/actions/workflows/CI.yml)
-[![build](https://img.shields.io/github/downloads/marcin-przywoski/FacebookExportDatePhotoFixer/total.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
-[![build](https://img.shields.io/github/v/release/marcin-przywoski/FacebookExportDatePhotoFixer)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
+[![Release](https://img.shields.io/github/release/marcin-przywoski/FacebookExportDatePhotoFixer.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
+[![Downloads](https://img.shields.io/github/downloads/marcin-przywoski/FacebookExportDatePhotoFixer/total.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
 
 This application is used to embed dates (Creation Time, Last Access Time, Last Write Time) back into the media contained in the Facebook Export as by default these are stripped. Currently it works only for HTML exports and selected media formats (GIF / JPG / MP4 / PNG).
 I've created it as there was no tool available for easy use that allowed to instantly embed dates from Messenger HTML files back into saved media and copy them to another location to keep original files in place.  
