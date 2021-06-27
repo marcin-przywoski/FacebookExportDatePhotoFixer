@@ -44,6 +44,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: acebookExportDatePhotoFixer/bin/Publish/Archive.zip
-          asset_name: acebookExportDatePhotoFixer.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer.zip
           asset_content_type: application/zip
