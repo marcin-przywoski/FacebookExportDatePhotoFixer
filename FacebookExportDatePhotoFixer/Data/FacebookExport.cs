@@ -111,8 +111,12 @@ namespace FacebookExportDatePhotoFixer.Data
             }
             outputLog.Dispatcher.Invoke(() =>
             {
-                outputLog.Items.Add($"There is {file.MessagesCount} of messages with linked media");
-                outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                if(file.MessagesCount != 0) 
+                {
+                    outputLog.Items.Add($"There is {file.MessagesCount} of messages with linked media");
+                    outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                }
+
                 outputLog.ScrollIntoView(outputLog.SelectedItem);
             });
                 
