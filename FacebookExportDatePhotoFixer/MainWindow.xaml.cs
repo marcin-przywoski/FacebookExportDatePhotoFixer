@@ -40,6 +40,7 @@ namespace FacebookExportDatePhotoFixer
             {
                 facebookExport.Location = chooseFolder.SelectedPath + "/";
                 SourceLocationLabel.Content = SourceLocationLabel.Content + chooseFolder.SelectedPath + "/";
+                SourceLocationLabel.ToolTip = SourceLocationLabel.Content;
             }
         }
 
@@ -51,6 +52,7 @@ namespace FacebookExportDatePhotoFixer
             {
                 facebookExport.Destination = chooseFolder.SelectedPath + "/";
                 DestinationLocationLabel.Content = DestinationLocationLabel.Content + chooseFolder.SelectedPath + "/";
+                DestinationLocationLabel.ToolTip = DestinationLocationLabel.Content;
             }
         }
 
