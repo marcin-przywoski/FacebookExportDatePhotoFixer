@@ -160,7 +160,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-single-file/Archive.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file/Archive.zip
           asset_name: FacebookExportDatePhotoFixer-netcoreapp3.1-self-contained-single-file.zip
           asset_content_type: application/zip
 
