@@ -58,32 +58,19 @@ namespace FacebookExportDatePhotoFixer
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            //if(String.IsNullOrEmpty(SourceLocationFolder.Text) || String.IsNullOrEmpty(DestinationLocationFolder.Text))
-            //{
-            //    MessageBox.Show("Paths have not been selected!");
-            //}
-            //else
-            //{
-            //    Progress<string> progress = new Progress<string>(value => 
-            //    {
-            //        OutputLog.Items.Add(value);
-            //    });
+            if (String.IsNullOrEmpty(facebookExport.Destination) || String.IsNullOrEmpty(facebookExport.Location))
+            {
+                MessageBox.Show("One of the paths have not been selected!");
+            }
+            else
+            {
+                _backgroundWorker.DoWork += _backgroundWorker_DoWork;
+                _backgroundWorker.RunWorkerAsync();
+                _listUpdateWorker.DoWork += _listUpdateWorker_DoWork;
+                _listUpdateWorker.RunWorkerAsync();
 
-            //    await Task.Run(() => FacebookExportFixerNoCtorTEST.FixDates(SourceLocationFolder.Text, DestinationLocationFolder.Text, progress));
+            }
 
-            //}
-            //if(sourceLocation is null)
-            //{
-            //    MessageBox.Show("Source location has not been selected!");
-            //}
-            //if(destinationLocation is null)
-            //{
-            //    MessageBox.Show("Destination location has not been selected!");
-            //}
-            _backgroundWorker.DoWork += _backgroundWorker_DoWork;
-            _backgroundWorker.RunWorkerAsync();
-            _listUpdateWorker.DoWork += _listUpdateWorker_DoWork;
-            _listUpdateWorker.RunWorkerAsync();
 
         }
 
