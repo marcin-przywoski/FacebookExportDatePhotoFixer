@@ -58,7 +58,7 @@ jobs:
         shell: pwsh
 
       - name: Pack (v5.x) (self contained - single file)
-        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-single-file/Archive.zip -Force
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file/Archive.zip -Force
         shell: pwsh
 
       - name: Pack (v5.x) (self contained - single file ReadyToRun)
