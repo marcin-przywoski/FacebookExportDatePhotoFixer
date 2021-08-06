@@ -88,6 +88,7 @@ namespace FacebookExportDatePhotoFixer
 
         private void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            facebookExport.GetLanguage();
             facebookExport.GetHtmlFiles(Progress, OutputLog);
             facebookExport.GetMessagesFromHtmlFiles(Progress, OutputLog);
             facebookExport.ProcessHtmlFiles(Progress, OutputLog);

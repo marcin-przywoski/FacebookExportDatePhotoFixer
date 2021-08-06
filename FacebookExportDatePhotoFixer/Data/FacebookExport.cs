@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
@@ -14,16 +15,16 @@ namespace FacebookExportDatePhotoFixer.Data
         public string Location { get; set; }
 
         public string Destination { get; set; }
-        //public CultureInfo Language { get; }
+        public CultureInfo Language { get; set; }
 
-        //public void GetLanguage()
-        //{
-        //    string preferencesLocation = this.Location + "/about_you/preferences.html";
-        //    HtmlDocument htmlDocument = new HtmlDocument();
-        //    htmlDocument.Load(preferencesLocation);
-        //    string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
-        //    this.Language = this.Language(locale, false);
-        //}
+        public void GetLanguage()
+        {
+            string preferencesLocation = this.Location + "/about_you/preferences.html";
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.Load(preferencesLocation);
+            string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
+            this.Language = new CultureInfo(locale, false);
+        }
 
         public void GetHtmlFiles(ProgressBar progressBar, ListBox outputLog)
         {
@@ -68,6 +69,9 @@ namespace FacebookExportDatePhotoFixer.Data
 
         public void GetMessagesFromHtmlFiles(ProgressBar progressBar, ListBox outputLog)
         {
+            // CultureInfo
+            //     System.Globalization.RegionInfo
+
             foreach (HtmlFile file in HtmlList)
             {
 
