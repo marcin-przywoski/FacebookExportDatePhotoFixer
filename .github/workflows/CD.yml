@@ -74,7 +74,7 @@ jobs:
         shell: pwsh
 
       - name: Pack (v3.1) (self contained - single file)
-        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-single-file/Archive.zip -Force
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file/Archive.zip -Force
         shell: pwsh
 
       - name: Pack (v3.1) (self contained - single file ReadyToRun)
@@ -120,7 +120,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-single-file/Archive.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file/Archive.zip
           asset_name: FacebookExportDatePhotoFixer-net5.0-self-contained-single-file.zip
           asset_content_type: application/zip
 
