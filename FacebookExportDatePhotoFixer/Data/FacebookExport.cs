@@ -28,6 +28,13 @@ namespace FacebookExportDatePhotoFixer.Data
 
         public void GetHtmlFiles(ProgressBar progressBar, ListBox outputLog)
         {
+            outputLog.Dispatcher.Invoke(() =>
+            {
+                outputLog.Items.Add("Export language : " +this.Language);
+                outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                outputLog.ScrollIntoView(outputLog.SelectedItem);
+            });
+
             List<string> listOfHtml = new List<string>();
             string messagesLocation = this.Location + "/messages/archived_threads/";
             outputLog.Dispatcher.Invoke(() =>
