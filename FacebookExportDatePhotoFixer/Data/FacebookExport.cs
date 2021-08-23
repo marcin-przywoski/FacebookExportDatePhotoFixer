@@ -98,7 +98,7 @@ namespace FacebookExportDatePhotoFixer.Data
                         if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
                         {
 
-                            DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText);
+                            DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText,this.Language);
 
                             HtmlNode link = node.SelectSingleNode(".//a[@href]");
                             //string href = link.GetAttributeValue("href", string.Empty);
