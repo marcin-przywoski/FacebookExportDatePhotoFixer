@@ -1,3 +1,7 @@
+### v0.00.04 (23-Aug-2021)
+
+- Fixed an issue where program was working only when language of export was set to Polish
+
 ### v0.00.03 (12-Jul-2021)
 
 - Added null check for paths before processing with export
