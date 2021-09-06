@@ -84,6 +84,7 @@
             TextAlignment="Center" />
             <Label x:Name="SourceLocationLabel" Content="Source location : " Grid.Row="1" VerticalAlignment="Center" Foreground="White" FontSize="16" FontWeight="Normal" FontStyle="Normal" Grid.ColumnSpan="6" Padding="0,0,0,0" HorizontalContentAlignment="Stretch" Height="23" Width="Auto" Grid.Column="1"/>
             <Label x:Name="DestinationLocationLabel" Content="Destination location : " Grid.Row="2" VerticalAlignment="Center" Foreground="White" FontSize="16" FontWeight="Normal" FontStyle="Normal" Grid.ColumnSpan="5" Padding="0,0,0,0" HorizontalContentAlignment="Stretch" Height="23" Width="Auto" Grid.Column="1"/>
+            <CheckBox x:Name="changeNamesToDates" Foreground="White" Content="Change filenames to their date of being sent" Grid.Column="1" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="3" VerticalAlignment="Center" Grid.ColumnSpan="3"/>
         </Grid>
     </Grid>
 </Window>

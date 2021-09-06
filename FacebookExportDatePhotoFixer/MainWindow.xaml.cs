@@ -91,7 +91,7 @@ namespace FacebookExportDatePhotoFixer
             facebookExport.GetLanguage();
             facebookExport.GetHtmlFiles(Progress, OutputLog);
             facebookExport.GetMessagesFromHtmlFiles(Progress, OutputLog);
-            facebookExport.ProcessHtmlFiles(Progress, OutputLog);
+            facebookExport.ProcessHtmlFiles(Progress, OutputLog, changeNamesToDates);
 
 
             //for(int i=0;i<100;i++)

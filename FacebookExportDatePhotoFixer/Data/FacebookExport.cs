@@ -135,7 +135,7 @@ namespace FacebookExportDatePhotoFixer.Data
             this.HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
         }
 
-        public void ProcessHtmlFiles(ProgressBar progressBar, ListBox outputLog)
+        public void ProcessHtmlFiles(ProgressBar progressBar, ListBox outputLog, CheckBox changeNameCheckbox)
         {
             outputLog.Dispatcher.InvokeAsync(() =>
             {
@@ -154,13 +154,30 @@ namespace FacebookExportDatePhotoFixer.Data
 
                     try
                     {
-                        if (File.Exists(this.Location + message.Link))
+                        if(changeNameCheckbox.IsChecked != false) 
                         {
-                            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(this.Destination + message.Link));
-                            File.Copy(this.Location + message.Link, this.Destination + message.Link);
-                            File.SetCreationTime(this.Destination + message.Link, message.Date);
-                            File.SetLastAccessTime(this.Destination + message.Link, message.Date);
-                            File.SetLastWriteTime(this.Destination + message.Link, message.Date);
+                            if (File.Exists(this.Location + message.Link))
+                            {
+                                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(this.Destination + message.Link));
+                                File.Copy(this.Location + message.Link, this.Destination + message.Link);
+                                FileInfo fileInfo = new FileInfo(this.Destination + message.Link);
+                                string newName = fileInfo.DirectoryName + message.Date;
+                                File.Move(this.Destination + message.Link, newName);
+                                File.SetCreationTime(newName, message.Date);
+                                File.SetLastAccessTime(newName, message.Date);
+                                File.SetLastWriteTime(newName, message.Date);
+                            }
+                        }
+                        else 
+                        {
+                            if (File.Exists(this.Location + message.Link))
+                            {
+                                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(this.Destination + message.Link));
+                                File.Copy(this.Location + message.Link, this.Destination + message.Link);
+                                File.SetCreationTime(this.Destination + message.Link, message.Date);
+                                File.SetLastAccessTime(this.Destination + message.Link, message.Date);
+                                File.SetLastWriteTime(this.Destination + message.Link, message.Date);
+                            }
                         }
                     }
                     catch (IOException)
