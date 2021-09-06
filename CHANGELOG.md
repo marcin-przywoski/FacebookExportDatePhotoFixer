@@ -1,3 +1,7 @@
+### v0.00.05 (06-Sep-2021)
+
+- Added ability to change filenames of exported files into date on which they were sent
+
 ### v0.00.04 (23-Aug-2021)
 
 - Fixed an issue where program was working only when language of export was set to Polish
