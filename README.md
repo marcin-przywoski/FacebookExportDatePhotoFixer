@@ -9,9 +9,10 @@ I've created it as there was no tool available for easy use that allowed to inst
 In case of any issues just post a new issue and I'll fix it - it will be a great opportunity for learning.
 ## Installation 
 Download the repository and compile it by yourself in VS Code or VS or download the compiled package from the Packages section
+I've added pre-compiled self contained packages if you don't have .NET core runtime installed
 
 ## Requirements
-- .NET 5 runtime
+- .NET 5 runtime or .NET 3.1 runtime if you want to compile it for yourself
 
 ## Road map
 
