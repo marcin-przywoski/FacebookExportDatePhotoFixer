@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/actions/workflows/CI.yml/badge.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/actions/workflows/CI.yml)
 [![Release](https://img.shields.io/github/release/marcin-przywoski/FacebookExportDatePhotoFixer.svg)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/marcin-przywoski/FacebookExportDatePhotoFixer)
 [![Downloads](https://img.shields.io/github/downloads/marcin-przywoski/FacebookExportDatePhotoFixer/total)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
 
 This application is used to embed dates (Creation Time, Last Access Time, Last Write Time) back into the media contained in the Facebook Export as by default these are stripped. Currently it works only for HTML exports and selected media formats (GIF / JPG / MP4 / PNG).
