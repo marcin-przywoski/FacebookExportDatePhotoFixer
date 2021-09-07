@@ -19,7 +19,7 @@ namespace FacebookExportDatePhotoFixer.Data
 
         public void GetLanguage()
         {
-            if(File.Exists(this.Location + "/about_you/preferences.html"))
+            if (File.Exists(this.Location + "/about_you/preferences.html"))
             {
                 string preferencesLocation = this.Location + "/about_you/preferences.html";
                 HtmlDocument htmlDocument = new HtmlDocument();
@@ -27,7 +27,7 @@ namespace FacebookExportDatePhotoFixer.Data
                 string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
                 this.Language = new CultureInfo(locale, false);
             }
-            else if(File.Exists(this.Location + "/preferences/language_and_locale.html"))
+            else if (File.Exists(this.Location + "/preferences/language_and_locale.html"))
             {
                 string preferencesLocation = this.Location + "/preferences/language_and_locale.html";
                 HtmlDocument htmlDocument = new HtmlDocument();
@@ -42,7 +42,7 @@ namespace FacebookExportDatePhotoFixer.Data
         {
             outputLog.Dispatcher.Invoke(() =>
             {
-                outputLog.Items.Add("Export language : " +this.Language);
+                outputLog.Items.Add("Export language : " + this.Language);
                 outputLog.SelectedIndex = outputLog.Items.Count - 1;
                 outputLog.ScrollIntoView(outputLog.SelectedItem);
             });
@@ -50,7 +50,7 @@ namespace FacebookExportDatePhotoFixer.Data
             List<string> listOfHtml = new List<string>();
             string messagesLocation = this.Location + "/messages/archived_threads/";
             outputLog.Dispatcher.Invoke(() =>
-            {   
+            {
                 outputLog.Items.Add("Gathering HTML files from archived threads...");
                 outputLog.SelectedIndex = outputLog.Items.Count - 1;
                 outputLog.ScrollIntoView(outputLog.SelectedItem);
@@ -94,32 +94,32 @@ namespace FacebookExportDatePhotoFixer.Data
             foreach (HtmlFile file in HtmlList)
             {
 
-            
-            outputLog.Dispatcher.InvokeAsync(() =>
-            {
-                progressBar.Value++;
-                outputLog.SelectedIndex = outputLog.Items.Count - 1;
-                outputLog.ScrollIntoView(outputLog.SelectedItem);
-            });
 
-            HtmlDocument htmlDocument = new HtmlDocument();
-            htmlDocument.Load(file.Location);
-            HtmlNodeCollection divs = htmlDocument.DocumentNode.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
-
-            foreach (HtmlNode node in divs)
-            {
-                    if(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
-                    {
-
-                    
-                if (node.SelectSingleNode(".//a[@href]") != null)
+                outputLog.Dispatcher.InvokeAsync(() =>
                 {
-                    string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
+                    progressBar.Value++;
+                    outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                    outputLog.ScrollIntoView(outputLog.SelectedItem);
+                });
 
-                    if (!(href.StartsWith("http")) || !(href.StartsWith("https")))
+                HtmlDocument htmlDocument = new HtmlDocument();
+                htmlDocument.Load(file.Location);
+                HtmlNodeCollection divs = htmlDocument.DocumentNode.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
+
+                foreach (HtmlNode node in divs)
+                {
+                    if (node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
                     {
-                        if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
+
+
+                        if (node.SelectSingleNode(".//a[@href]") != null)
                         {
+                            string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
+
+                            if (!(href.StartsWith("http")) || !(href.StartsWith("https")))
+                            {
+                                if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
+                                {
 
                                     DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, this.Language);
                                     //DateTime date = DateTime.Parse(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText);
@@ -127,28 +127,28 @@ namespace FacebookExportDatePhotoFixer.Data
                                     HtmlNode link = node.SelectSingleNode(".//a[@href]");
                                     //string href = link.GetAttributeValue("href", string.Empty);
 
-                                if (File.Exists(this.Location + href));
-                                {
-                                    file.ListOfMessages.Add(new Message(date, href));
+                                    if (File.Exists(this.Location + href))
+                                    {
+                                        file.ListOfMessages.Add(new Message(date, href));
+                                    }
+
+
                                 }
-
-
+                            }
                         }
                     }
                 }
-                    }
-            }
-            outputLog.Dispatcher.Invoke(() =>
-            {
-                if(file.MessagesCount != 0) 
+                outputLog.Dispatcher.Invoke(() =>
                 {
-                    outputLog.Items.Add($"There is {file.MessagesCount} of messages with linked media");
-                    outputLog.SelectedIndex = outputLog.Items.Count - 1;
-                }
+                    if (file.MessagesCount != 0)
+                    {
+                        outputLog.Items.Add($"There is {file.MessagesCount} of messages with linked media");
+                        outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                    }
 
-                outputLog.ScrollIntoView(outputLog.SelectedItem);
-            });
-                
+                    outputLog.ScrollIntoView(outputLog.SelectedItem);
+                });
+
             }
             this.HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
         }
@@ -174,20 +174,20 @@ namespace FacebookExportDatePhotoFixer.Data
 
                     try
                     {
-                        if(isChecked == true) 
+                        if (isChecked == true)
                         {
                             if (File.Exists(this.Location + message.Link))
                             {
                                 Directory.CreateDirectory(System.IO.Path.GetDirectoryName(this.Destination + message.Link));
                                 string date = message.Date.ToString("yyyyMMdd_HHmmss");
-                                string newName = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link),date);
+                                string newName = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link), date);
                                 File.Copy(this.Location + message.Link, this.Destination + newName);
                                 File.SetCreationTime(this.Destination + newName, message.Date);
                                 File.SetLastAccessTime(this.Destination + newName, message.Date);
                                 File.SetLastWriteTime(this.Destination + newName, message.Date);
                             }
                         }
-                        else 
+                        else
                         {
                             if (File.Exists(this.Location + message.Link))
                             {
