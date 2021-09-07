@@ -1,13 +1,19 @@
+### v0.00.08 (07-Sep-2021) 
+- [FIX] Fixed an issue with checkbox not being correctly applied to application logic.
+
+### v0.00.07 (07-Sep-2021) 
+- [FIX] Fixed an issue with newer version of exports where application would crash when encounterining embedded embedded photo of group conversation.
+
 ### v0.00.06 (07-Sep-2021) 
-- Fixed an issue with newer versions of export where file with language of the export was moved
+- [FIX] Fixed an issue with newer versions of export where file with language of the export was moved
 
 ### v0.00.05 (06-Sep-2021)
 
-- Added ability to change filenames of exported files into date on which they were sent
+- [FIX] Added ability to change filenames of exported files into date on which they were sent
 
 ### v0.00.04 (23-Aug-2021)
 
-- Fixed an issue where program was working only when language of export was set to Polish
+- [FIX] Fixed an issue where program was working only when language of export was set to Polish
 
 ### v0.00.03 (12-Jul-2021)
 
