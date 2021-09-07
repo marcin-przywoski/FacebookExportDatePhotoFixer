@@ -19,11 +19,23 @@ namespace FacebookExportDatePhotoFixer.Data
 
         public void GetLanguage()
         {
-            string preferencesLocation = this.Location + "/about_you/preferences.html";
-            HtmlDocument htmlDocument = new HtmlDocument();
-            htmlDocument.Load(preferencesLocation);
-            string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
-            this.Language = new CultureInfo(locale, false);
+            if(File.Exists(this.Location + "/about_you/preferences.html"))
+            {
+                string preferencesLocation = this.Location + "/about_you/preferences.html";
+                HtmlDocument htmlDocument = new HtmlDocument();
+                htmlDocument.Load(preferencesLocation);
+                string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
+                this.Language = new CultureInfo(locale, false);
+            }
+            else if(File.Exists(this.Location + "/preferences/language_and_locale.html"))
+            {
+                string preferencesLocation = this.Location + "/preferences/language_and_locale.html";
+                HtmlDocument htmlDocument = new HtmlDocument();
+                htmlDocument.Load(preferencesLocation);
+                string locale = htmlDocument.DocumentNode.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]").InnerText;
+                this.Language = new CultureInfo(locale, false);
+            }
+
         }
 
         public void GetHtmlFiles(ProgressBar progressBar, ListBox outputLog)
