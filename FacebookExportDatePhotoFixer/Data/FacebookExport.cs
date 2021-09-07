@@ -108,6 +108,10 @@ namespace FacebookExportDatePhotoFixer.Data
 
             foreach (HtmlNode node in divs)
             {
+                    if(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
+                    {
+
+                    
                 if (node.SelectSingleNode(".//a[@href]") != null)
                 {
                     string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
@@ -117,13 +121,14 @@ namespace FacebookExportDatePhotoFixer.Data
                         if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
                         {
 
-                            DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText,this.Language);
+                                    DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, this.Language);
+                                    //DateTime date = DateTime.Parse(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText);
 
-                            HtmlNode link = node.SelectSingleNode(".//a[@href]");
-                            //string href = link.GetAttributeValue("href", string.Empty);
+                                    HtmlNode link = node.SelectSingleNode(".//a[@href]");
+                                    //string href = link.GetAttributeValue("href", string.Empty);
 
-                            if (File.Exists(this.Location + href))
-                            {
+                                if (File.Exists(this.Location + href));
+                                {
                                     file.ListOfMessages.Add(new Message(date, href));
                                 }
 
@@ -131,6 +136,7 @@ namespace FacebookExportDatePhotoFixer.Data
                         }
                     }
                 }
+                    }
             }
             outputLog.Dispatcher.Invoke(() =>
             {
@@ -164,20 +170,21 @@ namespace FacebookExportDatePhotoFixer.Data
                         progressBar.Value++;
                     });
 
+                    bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
+
                     try
                     {
-                        if(changeNameCheckbox.IsChecked != false) 
+                        if(isChecked == true) 
                         {
                             if (File.Exists(this.Location + message.Link))
                             {
                                 Directory.CreateDirectory(System.IO.Path.GetDirectoryName(this.Destination + message.Link));
-                                File.Copy(this.Location + message.Link, this.Destination + message.Link);
-                                FileInfo fileInfo = new FileInfo(this.Destination + message.Link);
-                                string newName = fileInfo.DirectoryName + message.Date;
-                                File.Move(this.Destination + message.Link, newName);
-                                File.SetCreationTime(newName, message.Date);
-                                File.SetLastAccessTime(newName, message.Date);
-                                File.SetLastWriteTime(newName, message.Date);
+                                string date = message.Date.ToString("yyyyMMdd_HHmmss");
+                                string newName = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link),date);
+                                File.Copy(this.Location + message.Link, this.Destination + newName);
+                                File.SetCreationTime(this.Destination + newName, message.Date);
+                                File.SetLastAccessTime(this.Destination + newName, message.Date);
+                                File.SetLastWriteTime(this.Destination + newName, message.Date);
                             }
                         }
                         else 
