@@ -31,7 +31,7 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
 - Add ability to embed date into EXIF meta-data
 
-- Add ability to change filenames to date of being sent for ease of search 
+- ~~Add ability to change filenames to date of being sent for ease of search~~ 
 
 - Add an option to put everything in one folder instead of creating replication of original folder structure 
 
