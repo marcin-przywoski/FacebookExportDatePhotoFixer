@@ -1,3 +1,6 @@
+### v0.00.09 (10-Sep-2021) 
+- [FIX] Fixed an issue with files not being copied if at least 2 images had the same date of being sent (with checkbox checked)
+
 ### v0.00.08 (07-Sep-2021) 
 - [FIX] Fixed an issue with checkbox not being correctly applied to application logic.
 
