@@ -199,15 +199,48 @@ namespace FacebookExportDatePhotoFixer.Data
                             }
                         }
                     }
-                    catch (IOException)
+                    catch (IOException e)
                     {
-
-                        outputLog.Dispatcher.Invoke(() =>
+                        if(message.Link.Contains("stickers_used"))
                         {
-                            outputLog.Items.Add($" {this.Location + message.Link} already exists at destination folder");
-                            outputLog.SelectedIndex = outputLog.Items.Count - 1;
-                            outputLog.ScrollIntoView(outputLog.SelectedItem);
-                        });
+                            outputLog.Dispatcher.Invoke(() =>
+                            {
+                                outputLog.Items.Add($" {Path.GetFileNameWithoutExtension(message.Link)} is a sticker, skipping");
+                                outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                                outputLog.ScrollIntoView(outputLog.SelectedItem);
+                            });
+                        }
+                        else
+                        {
+                            DateTime dateNewName = message.Date;
+                            string date = dateNewName.ToString("yyyyMMdd_HHmmss");
+                            string newNameException = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link), date);
+
+                            while (File.Exists(this.Destination + newNameException))
+                            {
+
+                                outputLog.Dispatcher.Invoke(() =>
+                                {
+                                    outputLog.Items.Add($" {Path.GetFileNameWithoutExtension(message.Link)} file with same date as name already exists at target location!");
+                                    outputLog.Items.Add("Adding 1 second to filename to avoid I/O conflicts");
+                                    //outputLog.Items.Add($" {this.Location + message.Link} {e.Message}");
+                                    outputLog.SelectedIndex = outputLog.Items.Count - 1;
+                                    outputLog.ScrollIntoView(outputLog.SelectedItem);
+                                });
+                                dateNewName = dateNewName.AddSeconds(1);
+                                string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                newNameException = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link), dateFixed);
+                            }
+                            File.Copy(this.Location + message.Link, this.Destination + newNameException);
+                            File.SetCreationTime(this.Destination + newNameException, message.Date);
+                            File.SetLastAccessTime(this.Destination + newNameException, message.Date);
+                            File.SetLastWriteTime(this.Destination + newNameException, message.Date);
+                        }
+
+
+
+
+
                     }
 
                 }
