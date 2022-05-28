@@ -45,6 +45,7 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
  - [Html Agility Pack (HAP)](https://github.com/zzzprojects/html-agility-pack)
  - [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)
+ - [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 
 
   
