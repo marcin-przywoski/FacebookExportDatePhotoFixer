@@ -97,9 +97,6 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         public void GetMessagesFromHtmlFiles()
         {
-            // CultureInfo
-            //     System.Globalization.RegionInfo
-
             if (OnProgressUpdateBar != null)
             {
                 OnProgressUpdateBar(HtmlList.Count);
@@ -137,10 +134,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                                 {
 
                                     DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, Language);
-                                    //DateTime date = DateTime.Parse(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText);
 
                                     HtmlNode link = node.SelectSingleNode(".//a[@href]");
-                                    //string href = link.GetAttributeValue("href", string.Empty);
 
                                     if (File.Exists(Location + href))
                                     {
