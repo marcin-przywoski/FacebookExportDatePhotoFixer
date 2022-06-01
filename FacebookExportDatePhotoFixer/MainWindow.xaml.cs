@@ -101,12 +101,14 @@ namespace FacebookExportDatePhotoFixer
             export.ProcessHtmlFiles(changeNamesToDates);
         }
 
-        private void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            facebookExport.GetLanguage();
-            facebookExport.GetHtmlFiles(Progress, OutputLog);
-            facebookExport.GetMessagesFromHtmlFiles(Progress, OutputLog);
-            facebookExport.ProcessHtmlFiles(Progress, OutputLog, changeNamesToDates);
+        //private void WorkerDoWork(JsonExport export)
+        //{
+        //    export.GetLanguage();
+        //    export.GetHtmlFiles();
+        //    export.GetMessagesFromHtmlFiles();
+        //    Progress.Value = 0;
+        //    export.ProcessHtmlFiles(changeNamesToDates);
+        //}
 
         private void Export_OnProgressUpdateList(string text)
         {
