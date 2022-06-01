@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FacebookExportDatePhotoFixer.Data
+namespace FacebookExportDatePhotoFixer.Data.HTML
 {
     class Message
     {
@@ -19,9 +19,9 @@ namespace FacebookExportDatePhotoFixer.Data
         public Message(DateTime date, string link)
         {
             //this.Sender = sender;
-            this.Date = date;
-            this.Link = link;
-            this.ExtensionOfAttachment = link.Substring(link.Length - 4);
+            Date = date;
+            Link = link;
+            ExtensionOfAttachment = link.Substring(link.Length - 4);
         }
     }
 }

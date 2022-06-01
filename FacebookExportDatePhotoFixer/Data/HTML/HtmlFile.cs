@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using HtmlAgilityPack;
 
-namespace FacebookExportDatePhotoFixer.Data
+namespace FacebookExportDatePhotoFixer.Data.HTML
 {
     class HtmlFile
     {
@@ -20,7 +20,7 @@ namespace FacebookExportDatePhotoFixer.Data
         public HtmlFile(string path)
         {
             //this.htmlDocument.Load(path);
-            this.Location = path;
+            Location = path;
         }
 
     }

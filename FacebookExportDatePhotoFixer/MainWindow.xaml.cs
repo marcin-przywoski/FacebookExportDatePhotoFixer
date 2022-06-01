@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Ookii.Dialogs.Wpf;
 using System.ComponentModel;
-using FacebookExportDatePhotoFixer.Data;
+using System.IO;
+using FacebookExportDatePhotoFixer.Data.HTML;
 
 namespace FacebookExportDatePhotoFixer
 {
@@ -25,11 +27,13 @@ namespace FacebookExportDatePhotoFixer
     {
         private BackgroundWorker _backgroundWorker = new BackgroundWorker();
         private BackgroundWorker _listUpdateWorker = new BackgroundWorker();
-        FacebookExport facebookExport = new FacebookExport();
+        string exportLocation;
+        string destination;
 
         public MainWindow()
         {
             InitializeComponent();
+
         }
 
         private void SourceLocation_Click(object sender, RoutedEventArgs e)
@@ -38,8 +42,8 @@ namespace FacebookExportDatePhotoFixer
             bool? isBrowserDialogOpened = chooseFolder.ShowDialog();
             if (isBrowserDialogOpened == true)
             {
-                facebookExport.Location = chooseFolder.SelectedPath + "/";
-                SourceLocationLabel.Content = SourceLocationLabel.Content + chooseFolder.SelectedPath + "/";
+                exportLocation = chooseFolder.SelectedPath + "/";
+                SourceLocationLabel.Content = SourceLocationLabel.Content + exportLocation;
                 SourceLocationLabel.ToolTip = SourceLocationLabel.Content;
             }
         }
@@ -50,7 +54,7 @@ namespace FacebookExportDatePhotoFixer
             bool? isBrowserDialogOpened = chooseFolder.ShowDialog();
             if (isBrowserDialogOpened == true)
             {
-                facebookExport.Destination = chooseFolder.SelectedPath + "/";
+                destination = chooseFolder.SelectedPath + "/";
                 DestinationLocationLabel.Content = DestinationLocationLabel.Content + chooseFolder.SelectedPath + "/";
                 DestinationLocationLabel.ToolTip = DestinationLocationLabel.Content;
             }
@@ -58,32 +62,43 @@ namespace FacebookExportDatePhotoFixer
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrEmpty(facebookExport.Destination) || String.IsNullOrEmpty(facebookExport.Location))
+            if (String.IsNullOrEmpty(destination) || String.IsNullOrEmpty(exportLocation))
             {
                 MessageBox.Show("One of the paths have not been selected!");
             }
             else
             {
-                _backgroundWorker.DoWork += _backgroundWorker_DoWork;
+                if(CheckExportType(exportLocation) == "json")
+                {
+                    //FacebookExport facebookExport = new FacebookExport(exportLocation, destination);
+                    //_backgroundWorker.DoWork += (obj, e) => WorkerDoWork(facebookExport);
+                    //_backgroundWorker.RunWorkerAsync();
+                }
+                else if (CheckExportType(exportLocation) == "html")
+                {
+                    FacebookExport facebookExport = new FacebookExport(exportLocation,destination);
+                    facebookExport.OnProgressUpdateList += Export_OnProgressUpdateList;
+                    facebookExport.OnProgressUpdateBar += Export_OnProgressUpdateBar;
+                    _backgroundWorker.DoWork += (obj, e) => WorkerDoWork(facebookExport);
                 _backgroundWorker.RunWorkerAsync();
-                _listUpdateWorker.DoWork += _listUpdateWorker_DoWork;
-                _listUpdateWorker.RunWorkerAsync();
+                }
+                else if (CheckExportType(exportLocation) == "error")
+                {
+                    MessageBox.Show("Location folder does not contain no HTML nor Json files!");
+                }
+
 
             }
 
 
         }
 
-        private void _listUpdateWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void WorkerDoWork(FacebookExport export)
         {
-            //for(int i = 0; i<100; i++) {
-            //    System.Threading.Thread.Sleep(500);
-            //    Dispatcher.Invoke(() =>
-            //    {
-            //        OutputLog.Items.Add(i);
-            //        OutputLog.SelectedIndex = OutputLog.Items.Count - 1;
-            //    });
-            //}
+            export.GetLanguage();
+            export.GetHtmlFiles();
+            export.GetMessagesFromHtmlFiles();
+            export.ProcessHtmlFiles(changeNamesToDates);
         }
 
         private void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -93,17 +108,58 @@ namespace FacebookExportDatePhotoFixer
             facebookExport.GetMessagesFromHtmlFiles(Progress, OutputLog);
             facebookExport.ProcessHtmlFiles(Progress, OutputLog, changeNamesToDates);
 
+        private void Export_OnProgressUpdateList(string text)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                OutputLog.Items.Add(text);
+                OutputLog.SelectedIndex = OutputLog.Items.Count - 1;
+                OutputLog.ScrollIntoView(OutputLog.SelectedItem);
+            });
+        }
 
-            //for(int i=0;i<100;i++)
-            //{
-            //    System.Threading.Thread.Sleep(1000);
-            //    Dispatcher.Invoke(() =>
-            //        {
-            //        Progress.Value = i;
+        private void Export_OnProgressUpdateBar(int value)
+        {
+            if (value > 1)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Progress.Maximum = value;
+                });
+            }
+            else if(value == 1)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Progress.Value++;
+                });
+            }
+            else if (value == 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Progress.Value = 0;
+                });
+            }
 
-            //        });
+        }
 
-            //}
+        private string CheckExportType(string Location)
+        {
+            string[] json = Directory.GetFiles(Location, "*.json",SearchOption.AllDirectories);
+            string[] html = Directory.GetFiles(Location, "*.html", SearchOption.AllDirectories);
+            if (json.Length != 0)
+            {
+                return "json";
+            }
+            else if (html.Length != 0)
+            {
+                return "html";
+            }
+            else
+            {
+                return "error";
+            }
         }
     }
 }
