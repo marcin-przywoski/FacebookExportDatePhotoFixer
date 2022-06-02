@@ -114,9 +114,9 @@ namespace FacebookExportDatePhotoFixer
         {
             Dispatcher.Invoke(() =>
             {
-                OutputLog.Items.Add(text);
-                OutputLog.SelectedIndex = OutputLog.Items.Count - 1;
-                OutputLog.ScrollIntoView(OutputLog.SelectedItem);
+                OutputLog.AppendText(text);
+                OutputLog.AppendText(Environment.NewLine);
+                OutputLog.ScrollToEnd();
             });
         }
 

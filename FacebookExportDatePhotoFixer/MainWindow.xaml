@@ -68,14 +68,18 @@
             FontSize="16"
             ToolTip="Click to start amending the dates" Grid.Row="3"
             materialDesign:ButtonAssist.CornerRadius="10"/>
-            <ListBox
-            d:ItemsSource="{d:SampleData ItemCount=20}"
+            <TextBox
+            Style="{StaticResource MaterialDesignOutlinedTextBox}"
             x:Name="OutputLog"
+            TextWrapping="NoWrap"
+            IsReadOnly="True"
             Grid.Row="4"
             Grid.RowSpan="2"
             Grid.ColumnSpan="7"
             Margin="0,6,0,15"
-            ItemsSource="{Binding outputLog}" Grid.Column="1" />
+            materialDesign:HintAssist.Hint="Output from backend"
+            FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"
+            Grid.Column="1" />
             <ProgressBar
             x:Name="Progress"
             Grid.Row="6"
