@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-          matrix:
-            dotnetversion: [net5.0-windows, netcoreapp3.1]
       
     steps:
       - name: Checkout
@@ -28,32 +25,60 @@ jobs:
           dotnet-version: 3.1.x
 
           
-      - name: Build & publish (${{ matrix.dotnetversion }}) (framework dependant)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/framework-dependent --configuration Release -f ${{ matrix.dotnetversion }} --no-self-contained
+      - name: Build & publish (v5.x) (framework dependant)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/framework-dependent --configuration Release -f net5.0-windows --no-self-contained
 
-      - name: Build & publish (${{ matrix.dotnetversion }}) (self contained - dependencies included)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-dependencies-included --configuration Release -f ${{ matrix.dotnetversion }} -r win-x64 --self-contained
+      - name: Build & publish (v5.x) (self contained - dependencies included)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-included --configuration Release -f net5.0-windows -r win-x64 --self-contained
 
-      - name: Build & publish (${{ matrix.dotnetversion }}) (self contained - single file)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file -r win-x64 --self-contained --configuration Release -f ${{ matrix.dotnetversion }} /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
+      - name: Build & publish (v5.x) (self contained - single file)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file -r win-x64 --self-contained --configuration Release -f net5.0-windows /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
 
-      - name: Build & publish (${{ matrix.dotnetversion }}) (self contained - single file ReadyToRun)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f ${{ matrix.dotnetversion }} /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
+      - name: Build & publish (v5.x) (self contained - single file ReadyToRun)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f net5.0-windows /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
 
-      - name: Pack (${{ matrix.dotnetversion }}) (framework dependant)
-        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/framework-dependent/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/framework-dependent/Archive.zip -Force
+      - name: Build & publish (v3.1) (framework dependant)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/framework-dependent --configuration Release -f netcoreapp3.1
+
+      - name: Build & publish (v3.1) (self contained - dependencies included)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-included --configuration Release -f netcoreapp3.1 -r win-x64 --self-contained
+
+      - name: Build & publish (v3.1) (self contained - single file)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Build & publish (v3.1) (self contained - single file ReadyToRun)
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
+
+      - name: Pack (v5.x) (framework dependant)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/framework-dependent/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/framework-dependent/Archive.zip -Force
         shell: pwsh
 
-      - name: Pack (${{ matrix.dotnetversion }}) (self contained - dependencies included)
-        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-dependencies-included/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-dependencies-included/Archive.zip -Force
+      - name: Pack (v5.x) (self contained - dependencies included)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-included/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-included/Archive.zip -Force
         shell: pwsh
 
-      - name: Pack (${{ matrix.dotnetversion }}) (self contained - single file)
-        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file/Archive.zip -Force
+      - name: Pack (v5.x) (self contained - single file)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file/Archive.zip -Force
         shell: pwsh
 
-      - name: Pack (${{ matrix.dotnetversion }}) (self contained - single file ReadyToRun)
-        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file-RTR/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file-RTR/Archive.zip -Force
+      - name: Pack (v5.x) (self contained - single file ReadyToRun)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file-RTR/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file-RTR/Archive.zip -Force
+        shell: pwsh
+
+      - name: Pack (v3.1) (framework dependant)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/framework-dependent/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/framework-dependent/Archive.zip -Force
+        shell: pwsh
+
+      - name: Pack (v3.1) (self contained - dependencies included)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-included/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-included/Archive.zip -Force
+        shell: pwsh
+
+      - name: Pack (v3.1) (self contained - single file)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file/Archive.zip -Force
+        shell: pwsh
+
+      - name: Pack (v3.1) (self contained - single file ReadyToRun)
+        run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR/Archive.zip -Force
         shell: pwsh
 
       - name: Create release
@@ -69,42 +94,82 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload release asset (${{ matrix.dotnetversion }}) (framework dependant)
+      - name: Upload release asset (v5.x) (framework dependant)
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/framework-dependent/Archive.zip
-          asset_name: FacebookExportDatePhotoFixer-${{ matrix.dotnetversion }}-framework-dependent.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/framework-dependent/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-net5.0-framework-dependent.zip
           asset_content_type: application/zip
 
-      - name: Upload release asset (${{ matrix.dotnetversion }}) (self contained - dependencies included)
+      - name: Upload release asset (v5.x) (self contained - dependencies included)
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-dependencies-included/Archive.zip
-          asset_name: FacebookExportDatePhotoFixer-${{ matrix.dotnetversion }}-self-contained.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-dependencies-included/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-net5.0-self-contained.zip
           asset_content_type: application/zip
 
-      - name: Upload release asset (${{ matrix.dotnetversion }}) (self contained - single file)
+      - name: Upload release asset (v5.x) (self contained - single file)
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file/Archive.zip
-          asset_name: FacebookExportDatePhotoFixer-${{ matrix.dotnetversion }}-self-contained-single-file.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-net5.0-self-contained-single-file.zip
           asset_content_type: application/zip
 
-      - name: Upload release asset (${{ matrix.dotnetversion }}) (self contained - single file ReadyToRun)
+      - name: Upload release asset (v5.x) (self contained - single file ReadyToRun)
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FacebookExportDatePhotoFixer/bin/Publish/${{ matrix.dotnetversion }}/self-contained-single-file-RTR/Archive.zip
-          asset_name: FacebookExportDatePhotoFixer-${{ matrix.dotnetversion }}-self-contained-single-file-RTR.zip
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows/self-contained-single-file-RTR/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-net5.0-self-contained-single-file-RTR.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset (v3.1) (framework dependant)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/framework-dependent/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-netcoreapp3.1-framework-dependent.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset (v3.1) (self contained - dependencies included)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-included/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-netcoreapp3.1-self-contained.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset (v3.1) (self contained - single file)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-netcoreapp3.1-self-contained-single-file.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset (v3.1) (self contained - single file ReadyToRun)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR/Archive.zip
+          asset_name: FacebookExportDatePhotoFixer-netcoreapp3.1-self-contained-single-file-RTR.zip
           asset_content_type: application/zip
