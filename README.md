@@ -23,7 +23,7 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
 - Add wider support for different .NET versions
 
-- Improve UI and clarity of the program
+- ~~Improve UI~~ and clarity of the program
 
 - Add more customization options  
 
