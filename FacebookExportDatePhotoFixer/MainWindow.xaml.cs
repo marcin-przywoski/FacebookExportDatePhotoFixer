@@ -17,6 +17,7 @@ using Ookii.Dialogs.Wpf;
 using System.ComponentModel;
 using System.IO;
 using FacebookExportDatePhotoFixer.Data.HTML;
+using FacebookExportDatePhotoFixer.Data.JSON;
 
 namespace FacebookExportDatePhotoFixer
 {
@@ -26,7 +27,6 @@ namespace FacebookExportDatePhotoFixer
     public partial class MainWindow : Window
     {
         private BackgroundWorker _backgroundWorker = new BackgroundWorker();
-        private BackgroundWorker _listUpdateWorker = new BackgroundWorker();
         string exportLocation;
         string destination;
 
@@ -68,19 +68,21 @@ namespace FacebookExportDatePhotoFixer
             }
             else
             {
-                if(CheckExportType(exportLocation) == "json")
+                if (CheckExportType(exportLocation) == "json")
                 {
-                    //FacebookExport facebookExport = new FacebookExport(exportLocation, destination);
-                    //_backgroundWorker.DoWork += (obj, e) => WorkerDoWork(facebookExport);
-                    //_backgroundWorker.RunWorkerAsync();
+                    JsonExport jsonExport = new JsonExport(exportLocation, destination);
+                    jsonExport.OnProgressUpdateList += Export_OnProgressUpdateList;
+                    jsonExport.OnProgressUpdateBar += Export_OnProgressUpdateBar;
+                    _backgroundWorker.DoWork += (obj, e) => WorkerDoWork(jsonExport);
+                    _backgroundWorker.RunWorkerAsync();
                 }
                 else if (CheckExportType(exportLocation) == "html")
                 {
-                    FacebookExport facebookExport = new FacebookExport(exportLocation,destination);
+                    FacebookExport facebookExport = new FacebookExport(exportLocation, destination);
                     facebookExport.OnProgressUpdateList += Export_OnProgressUpdateList;
                     facebookExport.OnProgressUpdateBar += Export_OnProgressUpdateBar;
                     _backgroundWorker.DoWork += (obj, e) => WorkerDoWork(facebookExport);
-                _backgroundWorker.RunWorkerAsync();
+                    _backgroundWorker.RunWorkerAsync();
                 }
                 else if (CheckExportType(exportLocation) == "error")
                 {
@@ -101,14 +103,13 @@ namespace FacebookExportDatePhotoFixer
             export.ProcessHtmlFiles(changeNamesToDates);
         }
 
-        //private void WorkerDoWork(JsonExport export)
-        //{
-        //    export.GetLanguage();
-        //    export.GetHtmlFiles();
-        //    export.GetMessagesFromHtmlFiles();
-        //    Progress.Value = 0;
-        //    export.ProcessHtmlFiles(changeNamesToDates);
-        //}
+        private void WorkerDoWork(JsonExport export)
+        {
+            export.GetLanguage();
+            export.GetExportFiles();
+            export.GetMessagesFromExportFiles();
+            export.ProcessExportFiles(changeNamesToDates);
+        }
 
         private void Export_OnProgressUpdateList(string text)
         {
@@ -129,7 +130,7 @@ namespace FacebookExportDatePhotoFixer
                     Progress.Maximum = value;
                 });
             }
-            else if(value == 1)
+            else if (value == 1)
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -148,7 +149,7 @@ namespace FacebookExportDatePhotoFixer
 
         private string CheckExportType(string Location)
         {
-            string[] json = Directory.GetFiles(Location, "*.json",SearchOption.AllDirectories);
+            string[] json = Directory.GetFiles(Location, "*.json", SearchOption.AllDirectories);
             string[] html = Directory.GetFiles(Location, "*.html", SearchOption.AllDirectories);
             if (json.Length != 0)
             {
