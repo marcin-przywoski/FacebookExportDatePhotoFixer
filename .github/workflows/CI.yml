@@ -21,8 +21,14 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.x
+    - name: Setup .NET 6.0.x
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
+    - name: Build 6.0
+      run: dotnet build -f net6.0-windows --no-restore
     - name: Build 5.0
       run: dotnet build -f net5.0-windows --no-restore
     - name: Build 3.x
