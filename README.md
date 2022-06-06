@@ -19,9 +19,9 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
 - Make program compatible with different versions of exports including older ones (facebook changes some things over time).
 
-- Allow program to work with JSON exports
+- ~~Allow program to work with JSON exports~~
 
-- Add wider support for different .NET versions
+- ~~Add wider support for different .NET versions~~
 
 - ~~Improve UI~~ and clarity of the program
 
