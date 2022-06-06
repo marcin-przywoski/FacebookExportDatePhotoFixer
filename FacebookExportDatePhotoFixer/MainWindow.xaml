@@ -79,7 +79,8 @@
             Margin="0,6,0,15"
             materialDesign:HintAssist.Hint="Output from backend"
             FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"
-            Grid.Column="1" />
+            Grid.Column="1"
+            Text=" "/>
             <ProgressBar
             x:Name="Progress"
             Grid.Row="6"
