@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.IO;
 using FacebookExportDatePhotoFixer.Data.HTML;
 using FacebookExportDatePhotoFixer.Data.JSON;
+using System.Diagnostics;
 
 namespace FacebookExportDatePhotoFixer
 {
@@ -99,18 +100,35 @@ namespace FacebookExportDatePhotoFixer
 
         private void WorkerDoWork(FacebookExport export)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             export.GetLanguage();
             export.GetHtmlFiles();
             export.GetMessagesFromHtmlFiles();
             export.ProcessHtmlFiles(changeNamesToDates);
+            stopwatch.Stop();
+            Dispatcher.Invoke(() =>
+            {
+                OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g} ");
+                File.WriteAllText(destination + "log.txt", OutputLog.Text);
+            });
         }
 
         private void WorkerDoWork(JsonExport export)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             export.GetLanguage();
             export.GetExportFiles();
             export.GetMessagesFromExportFiles();
             export.ProcessExportFiles(changeNamesToDates);
+            stopwatch.Stop();
+            Dispatcher.Invoke(() =>
+            {
+                OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g} ");
+                File.WriteAllText(destination + "log.txt", OutputLog.Text);
+            });
+
         }
 
         private void Export_OnProgressUpdateList(string text)
