@@ -42,6 +42,7 @@ namespace FacebookExportDatePhotoFixer
             bool? isBrowserDialogOpened = chooseFolder.ShowDialog();
             if (isBrowserDialogOpened == true)
             {
+                SourceLocationLabel.Content = "Source location : ";
                 exportLocation = chooseFolder.SelectedPath + "/";
                 SourceLocationLabel.Content = SourceLocationLabel.Content + exportLocation;
                 SourceLocationLabel.ToolTip = SourceLocationLabel.Content;
@@ -54,6 +55,7 @@ namespace FacebookExportDatePhotoFixer
             bool? isBrowserDialogOpened = chooseFolder.ShowDialog();
             if (isBrowserDialogOpened == true)
             {
+                DestinationLocationLabel.Content = "Destination location : ";
                 destination = chooseFolder.SelectedPath + "/";
                 DestinationLocationLabel.Content = DestinationLocationLabel.Content + chooseFolder.SelectedPath + "/";
                 DestinationLocationLabel.ToolTip = DestinationLocationLabel.Content;
