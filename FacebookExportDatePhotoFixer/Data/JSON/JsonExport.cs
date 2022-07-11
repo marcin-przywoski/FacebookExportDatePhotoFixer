@@ -177,6 +177,11 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                 {
                                     if (File.Exists(Location + photo.Uri))
                                     {
+                                        if (OnProgressUpdateList != null)
+                                        {
+                                            OnProgressUpdateList(photo.Uri);
+                                        }
+
                                         Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
                                         string date = message.Date.ToString("yyyyMMdd_HHmmss");
                                         string newName = photo.Uri.Replace(Path.GetFileNameWithoutExtension(photo.Uri), date);
@@ -192,6 +197,11 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                 foreach (Conversation.Message.Photo photo in message.Photos)
                                 {
                                     if (File.Exists(Location + photo.Uri))
+
+                                        if (OnProgressUpdateList != null)
+                                        {
+                                            OnProgressUpdateList(photo.Uri);
+                                        }
                                     {
                                         Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
                                         File.Copy(Location + photo.Uri, Destination + photo.Uri);
@@ -244,6 +254,10 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                 {
                                     if (File.Exists(Location + gif.Uri))
                                     {
+                                        if (OnProgressUpdateList != null)
+                                        {
+                                            OnProgressUpdateList(gif.Uri);
+                                        }
                                         Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
                                         string date = message.Date.ToString("yyyyMMdd_HHmmss");
                                         string newName = gif.Uri.Replace(Path.GetFileNameWithoutExtension(gif.Uri), date);
@@ -260,6 +274,10 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                 {
                                     if (File.Exists(Location + gif.Uri))
                                     {
+                                        if (OnProgressUpdateList != null)
+                                        {
+                                            OnProgressUpdateList(gif.Uri);
+                                        }
                                         Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
                                         File.Copy(Location + gif.Uri, Destination + gif.Uri);
                                         File.SetCreationTime(Destination + gif.Uri, message.Date);
@@ -311,6 +329,10 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                 {
                                     if (File.Exists(Location + video.Uri))
                                     {
+                                        if (OnProgressUpdateList != null)
+                                        {
+                                            OnProgressUpdateList(video.Uri);
+                                        }
                                         Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
                                         string date = message.Date.ToString("yyyyMMdd_HHmmss");
                                         string newName = video.Uri.Replace(Path.GetFileNameWithoutExtension(video.Uri), date);
@@ -327,6 +349,10 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                 {
                                     if (File.Exists(Location + video.Uri))
                                     {
+                                        if (OnProgressUpdateList != null)
+                                        {
+                                            OnProgressUpdateList(video.Uri);
+                                        }
                                         Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
                                         File.Copy(Location + video.Uri, Destination + video.Uri);
                                         File.SetCreationTime(Destination + video.Uri, message.Date);
