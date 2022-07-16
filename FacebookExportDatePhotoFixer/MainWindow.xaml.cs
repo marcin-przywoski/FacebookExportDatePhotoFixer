@@ -131,9 +131,9 @@ namespace FacebookExportDatePhotoFixer
 
         }
 
-        private void Export_OnProgressUpdateList(string text)
+        private async Task Export_OnProgressUpdateList(string text)
         {
-            Dispatcher.Invoke(() =>
+            await Dispatcher.InvokeAsync(() =>
             {
                 OutputLog.AppendText(text);
                 OutputLog.AppendText(Environment.NewLine);
@@ -141,25 +141,25 @@ namespace FacebookExportDatePhotoFixer
             });
         }
 
-        private void Export_OnProgressUpdateBar(int value)
+        private async Task Export_OnProgressUpdateBar(int value)
         {
             if (value > 1)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     Progress.Maximum = value;
                 });
             }
             else if (value == 1)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     Progress.Value++;
                 });
             }
             else if (value == 0)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     Progress.Value = 0;
                 });
