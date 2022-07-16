@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using HtmlAgilityPack;
@@ -11,9 +12,9 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 {
     class FacebookExport
     {
-        public delegate void ProgressUpdate(string value);
+        public delegate Task ProgressUpdate(string value);
 
-        public delegate void BarUpdate(int value);
+        public delegate Task BarUpdate(int value);
 
         public event ProgressUpdate OnProgressUpdateList;
 

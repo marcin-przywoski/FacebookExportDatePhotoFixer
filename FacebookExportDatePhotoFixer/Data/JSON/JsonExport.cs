@@ -17,9 +17,9 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 {
     class JsonExport : IExport
     {
-        public delegate void ProgressUpdate(string value);
+        public delegate Task ProgressUpdate(string value);
 
-        public delegate void BarUpdate(int value);
+        public delegate Task BarUpdate(int value);
 
         public event ProgressUpdate OnProgressUpdateList;
 
