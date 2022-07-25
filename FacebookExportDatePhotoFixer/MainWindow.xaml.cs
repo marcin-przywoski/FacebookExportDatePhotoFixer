@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -73,94 +73,77 @@ namespace FacebookExportDatePhotoFixer
             {
                 if (CheckExportType(exportLocation) == "json")
                 {
-                    JsonExport jsonExport = new JsonExport(exportLocation, destination);
-                    jsonExport.OnProgressUpdateList += Export_OnProgressUpdateList;
-                    jsonExport.OnProgressUpdateBar += Export_OnProgressUpdateBar;
-                    _backgroundWorker.DoWork += (obj, e) => WorkerDoWork(jsonExport);
-                    _backgroundWorker.RunWorkerAsync();
+                    JsonExportAsync jsonExportAsync = new JsonExportAsync(exportLocation, destination);
+                    jsonExportAsync.OnProgressUpdateList += Export_OnProgressUpdateList;
+                    jsonExportAsync.OnProgressUpdateBar += Export_OnProgressUpdateBar;
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    await jsonExportAsync.GetLanguage().ConfigureAwait(true);
+                    await jsonExportAsync.GetExportFiles().ConfigureAwait(true);
+                    await jsonExportAsync.GetMessagesFromExportFiles().ConfigureAwait(true);
+                    await jsonExportAsync.ProcessExportFiles(changeNamesToDates).ConfigureAwait(true);
+                    stopwatch.Stop();
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g} ");
+                        File.WriteAllTextAsync(destination + "log.txt", OutputLog.Text);
+                    });
                 }
                 else if (CheckExportType(exportLocation) == "html")
                 {
                     FacebookExport facebookExport = new FacebookExport(exportLocation, destination);
                     facebookExport.OnProgressUpdateList += Export_OnProgressUpdateList;
                     facebookExport.OnProgressUpdateBar += Export_OnProgressUpdateBar;
-                    _backgroundWorker.DoWork += (obj, e) => WorkerDoWork(facebookExport);
-                    _backgroundWorker.RunWorkerAsync();
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    await facebookExport.GetLanguage().ConfigureAwait(true);
+                    await facebookExport.GetHtmlFiles().ConfigureAwait(true);
+                    await facebookExport.GetMessagesFromHtmlFiles().ConfigureAwait(true);
+                    await facebookExport.ProcessHtmlFiles(changeNamesToDates).ConfigureAwait(true);
+                    stopwatch.Stop();
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g} ");
+                        File.WriteAllTextAsync(destination + "log.txt", OutputLog.Text);
+                    });
                 }
                 else if (CheckExportType(exportLocation) == "error")
                 {
                     MessageBox.Show("Location folder does not contain no HTML nor Json files!");
                 }
-
-
             }
-
-
         }
 
-        private void WorkerDoWork(FacebookExport export)
+        private async Task Export_OnProgressUpdateList(string text)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            export.GetLanguage();
-            export.GetHtmlFiles();
-            export.GetMessagesFromHtmlFiles();
-            export.ProcessHtmlFiles(changeNamesToDates);
-            stopwatch.Stop();
-            Dispatcher.Invoke(() =>
-            {
-                OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g} ");
-                File.WriteAllText(destination + "log.txt", OutputLog.Text);
-            });
+            await Dispatcher.InvokeAsync(() =>
+               {
+                   OutputLog.AppendText(text);
+                   OutputLog.AppendText(Environment.NewLine);
+                   OutputLog.ScrollToEnd();
+               });
         }
 
-        private void WorkerDoWork(JsonExport export)
-        {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            export.GetLanguage();
-            export.GetExportFiles();
-            export.GetMessagesFromExportFiles();
-            export.ProcessExportFiles(changeNamesToDates);
-            stopwatch.Stop();
-            Dispatcher.Invoke(() =>
-            {
-                OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g} ");
-                File.WriteAllText(destination + "log.txt", OutputLog.Text);
-            });
-
-        }
-
-        private void Export_OnProgressUpdateList(string text)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                OutputLog.AppendText(text);
-                OutputLog.AppendText(Environment.NewLine);
-                OutputLog.ScrollToEnd();
-            });
-        }
-
-        private void Export_OnProgressUpdateBar(int value)
+        private async Task Export_OnProgressUpdateBar(int value)
         {
             if (value > 1)
             {
-                Dispatcher.Invoke(() =>
-                {
+                await Dispatcher.InvokeAsync(() =>
+                  {
                     Progress.Maximum = value;
-                });
+                  });
             }
             else if (value == 1)
             {
-                Dispatcher.Invoke(() =>
-                {
+                await Dispatcher.InvokeAsync(() =>
+                  {
                     Progress.Value++;
-                });
+                  });
             }
             else if (value == 0)
             {
-                Dispatcher.Invoke(() =>
-                {
+                await Dispatcher.InvokeAsync(() =>
+                  {
                     Progress.Value = 0;
                 });
             }
