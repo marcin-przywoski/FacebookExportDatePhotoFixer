@@ -268,14 +268,17 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         }
 
-        private int GetAmountOfMessagesInExport(List<HtmlFile> htmlFiles)
+        private async Task<int> GetAmountOfMessagesInExport(List<HtmlFile> htmlFiles)
         {
             int count = 0;
-
+            await Task.Run(() =>
+            {
             foreach (HtmlFile file in htmlFiles)
             {
                 count = +file.MessagesCount;
             }
+            });
+
             return count;
         }
     }
