@@ -127,6 +127,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
         public async Task GetMessagesFromExportFiles()
         {
+            await Task.Run(async () =>
+            {
             if (OnProgressUpdateBar != null)
             {
                 OnProgressUpdateBar(JsonList.Count);
@@ -154,14 +156,15 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                 {
                     if (totalMessagesCount != 0 && totalMessagesCount > 1)
                     {
-                        OnProgressUpdateList($"There are {totalMessagesCount} messages, of which {file.Conversation.Messages.Count} with linked media");
+                            await OnProgressUpdateList($"There are {totalMessagesCount} messages, of which {file.Conversation.Messages.Count} with linked media");
                     }
                     else if (totalMessagesCount == 1)
                     {
-                        OnProgressUpdateList($"There is {totalMessagesCount} message, of which {file.Conversation.Messages.Count} with linked media");
+                            await OnProgressUpdateList($"There is {totalMessagesCount} message, of which {file.Conversation.Messages.Count} with linked media");
                     }
                 }
             }
+            });
         }
         public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
