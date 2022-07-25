@@ -62,12 +62,15 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
         public async Task GetExportFiles()
         {
+            await Task.Run(async () =>
+            {
             if (OnProgressUpdateList != null)
             {
                 OnProgressUpdateList("Export language : " + Language);
             }
 
             List<string> listOfJson = new List<string>();
+
             string messagesLocation = Location + "/messages/archived_threads/";
 
             if (Directory.Exists(messagesLocation))
@@ -114,8 +117,11 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
             if (OnProgressUpdateList != null)
             {
-                OnProgressUpdateList("Found " + JsonList.Count + " JSON files to process");
+                    await OnProgressUpdateList("Found " + JsonList.Count + " JSON files to process");
             }
+            });
+
+
 
         }
 
