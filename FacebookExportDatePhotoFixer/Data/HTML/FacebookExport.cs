@@ -56,9 +56,10 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
             });
         }
 
-        public void GetHtmlFiles()
+        public async Task GetHtmlFiles()
         {
-
+            await Task.Run(async () =>
+            {
             if (OnProgressUpdateList != null)
             {
                 OnProgressUpdateList("Export language : " + Language);
@@ -96,6 +97,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
             {
                 OnProgressUpdateList("Found " + HtmlList.Count + " HTML files to process");
             }
+            });
+
         }
 
         public void GetMessagesFromHtmlFiles()
