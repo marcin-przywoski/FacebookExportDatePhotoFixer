@@ -45,80 +45,80 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
             {
                 await Task.Run(async () =>
                 {
-                string preferencesLocation = Location + "/preferences/language_and_locale.json";
+                    string preferencesLocation = Location + "/preferences/language_and_locale.json";
                     Task<string> jsonTask = File.ReadAllTextAsync(preferencesLocation);
                     string json = await jsonTask;
-                JObject jsonObj = JObject.Parse(json);
-                string locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value");
-                Language = new CultureInfo(locale, false);
+                    JObject jsonObj = JObject.Parse(json);
+                    string locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value");
+                    Language = new CultureInfo(locale, false);
                     if (OnProgressUpdateList != null)
                     {
                         OnProgressUpdateList("Export language : " + Language);
-            }
+                    }
                 });
 
-        }
+            }
         }
 
         public async Task GetExportFiles()
         {
             await Task.Run(async () =>
             {
-            if (OnProgressUpdateList != null)
-            {
-                OnProgressUpdateList("Export language : " + Language);
-            }
-
-            List<string> listOfJson = new List<string>();
-
-            string messagesLocation = Location + "/messages/archived_threads/";
-
-            if (Directory.Exists(messagesLocation))
-            {
                 if (OnProgressUpdateList != null)
                 {
-                    OnProgressUpdateList("Gathering JSON files from archived threads...");
+                    OnProgressUpdateList("Export language : " + Language);
                 }
 
-                listOfJson.AddRange(Directory.GetFiles(messagesLocation, "*.json", SearchOption.AllDirectories).ToList());
+                List<string> listOfJson = new List<string>();
 
-            }
+                string messagesLocation = Location + "/messages/archived_threads/";
 
-            messagesLocation = Location + "/messages/filtered_threads/";
+                if (Directory.Exists(messagesLocation))
+                {
+                    if (OnProgressUpdateList != null)
+                    {
+                        OnProgressUpdateList("Gathering JSON files from archived threads...");
+                    }
 
-            if (Directory.Exists(messagesLocation))
-            {
+                    listOfJson.AddRange(Directory.GetFiles(messagesLocation, "*.json", SearchOption.AllDirectories).ToList());
+
+                }
+
+                messagesLocation = Location + "/messages/filtered_threads/";
+
+                if (Directory.Exists(messagesLocation))
+                {
+                    if (OnProgressUpdateList != null)
+                    {
+                        OnProgressUpdateList("Gathering JSON files from filtered threads...");
+                    }
+
+                    listOfJson.AddRange(Directory.GetFiles(messagesLocation, "*.json", SearchOption.AllDirectories).ToList());
+                }
+
+                messagesLocation = Location + "/messages/inbox/";
+
+                if (Directory.Exists(messagesLocation))
+                {
+                    if (OnProgressUpdateList != null)
+                    {
+                        OnProgressUpdateList("Gathering JSON files from inbox...");
+                    }
+
+                    listOfJson.AddRange(Directory.GetFiles(messagesLocation, "*.json", SearchOption.AllDirectories).ToList());
+                }
+
+
+
+                foreach (string jsonFile in listOfJson)
+                {
+                    JsonList.Add(new JsonFile(jsonFile));
+                }
+
                 if (OnProgressUpdateList != null)
                 {
-                    OnProgressUpdateList("Gathering JSON files from filtered threads...");
-                }
-
-                listOfJson.AddRange(Directory.GetFiles(messagesLocation, "*.json", SearchOption.AllDirectories).ToList());
-            }
-
-            messagesLocation = Location + "/messages/inbox/";
-
-            if (Directory.Exists(messagesLocation))
-            {
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Gathering JSON files from inbox...");
-                }
-
-                listOfJson.AddRange(Directory.GetFiles(messagesLocation, "*.json", SearchOption.AllDirectories).ToList());
-            }
-
-
-
-            foreach (string jsonFile in listOfJson)
-            {
-                JsonList.Add(new JsonFile(jsonFile));
-            }
-
-            if (OnProgressUpdateList != null)
-            {
                     await OnProgressUpdateList("Found " + JsonList.Count + " JSON files to process");
-            }
+                }
             });
 
 
@@ -129,303 +129,303 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
         {
             await Task.Run(async () =>
             {
-            if (OnProgressUpdateBar != null)
-            {
-                OnProgressUpdateBar(JsonList.Count);
-            }
-
-            foreach (JsonFile file in JsonList)
-            {
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Processing : " + file.Location);
-                }
-
                 if (OnProgressUpdateBar != null)
                 {
-                    OnProgressUpdateBar(1);
+                    OnProgressUpdateBar(JsonList.Count);
                 }
 
-                file.Conversation = JsonConvert.DeserializeObject<Conversation>(File.ReadAllText(file.Location));
-
-                int totalMessagesCount = file.Conversation.Messages.Count;
-
-                file.Conversation.Messages.RemoveAll(s => s.Photos is null && s.Gifs is null && s.Videos is null);
-
-                if (OnProgressUpdateList != null)
+                foreach (JsonFile file in JsonList)
                 {
-                    if (totalMessagesCount != 0 && totalMessagesCount > 1)
+                    if (OnProgressUpdateList != null)
                     {
-                            await OnProgressUpdateList($"There are {totalMessagesCount} messages, of which {file.Conversation.Messages.Count} with linked media");
+                        OnProgressUpdateList("Processing : " + file.Location);
                     }
-                    else if (totalMessagesCount == 1)
+
+                    if (OnProgressUpdateBar != null)
                     {
+                        OnProgressUpdateBar(1);
+                    }
+
+                    file.Conversation = JsonConvert.DeserializeObject<Conversation>(File.ReadAllText(file.Location));
+
+                    int totalMessagesCount = file.Conversation.Messages.Count;
+
+                    file.Conversation.Messages.RemoveAll(s => s.Photos is null && s.Gifs is null && s.Videos is null);
+
+                    if (OnProgressUpdateList != null)
+                    {
+                        if (totalMessagesCount != 0 && totalMessagesCount > 1)
+                        {
+                            await OnProgressUpdateList($"There are {totalMessagesCount} messages, of which {file.Conversation.Messages.Count} with linked media");
+                        }
+                        else if (totalMessagesCount == 1)
+                        {
                             await OnProgressUpdateList($"There is {totalMessagesCount} message, of which {file.Conversation.Messages.Count} with linked media");
+                        }
                     }
                 }
-            }
             });
         }
         public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
             await Task.Run(async () =>
              {
-            if (OnProgressUpdateBar != null)
-            {
-                OnProgressUpdateBar(0);
-            }
+                 if (OnProgressUpdateBar != null)
+                 {
+                     OnProgressUpdateBar(0);
+                 }
 
-            if (OnProgressUpdateBar != null)
-            {
+                 if (OnProgressUpdateBar != null)
+                 {
                      await OnProgressUpdateBar(await GetAmountOfMessagesInExport(JsonList));
-            }
+                 }
 
-            foreach (JsonFile file in JsonList)
-            {
-                foreach (Conversation.Message message in file.Conversation.Messages)
-                {
-                    if (OnProgressUpdateBar != null)
-                    {
-                        OnProgressUpdateBar(1);
-                    }
+                 foreach (JsonFile file in JsonList)
+                 {
+                     foreach (Conversation.Message message in file.Conversation.Messages)
+                     {
+                         if (OnProgressUpdateBar != null)
+                         {
+                             OnProgressUpdateBar(1);
+                         }
 
-                    bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
+                         bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
 
-                    if (!(message.Photos is null))
-                    {
-                        try
-                        {
-                            if (isChecked == true)
-                            {
-                                foreach (Conversation.Message.Photo photo in message.Photos)
-                                {
-                                    if (File.Exists(Location + photo.Uri))
-                                    {
+                         if (!(message.Photos is null))
+                         {
+                             try
+                             {
+                                 if (isChecked == true)
+                                 {
+                                     foreach (Conversation.Message.Photo photo in message.Photos)
+                                     {
+                                         if (File.Exists(Location + photo.Uri))
+                                         {
                                              if (OnProgressUpdateList != null)
                                              {
                                                  OnProgressUpdateList(photo.Uri);
                                              }
-                                        Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
-                                        string date = message.Date.ToString("yyyyMMdd_HHmmss");
-                                        string newName = photo.Uri.Replace(Path.GetFileNameWithoutExtension(photo.Uri), date);
-                                        File.Copy(Location + photo.Uri, Destination + newName);
-                                        File.SetCreationTime(Destination + newName, message.Date);
-                                        File.SetLastAccessTime(Destination + newName, message.Date);
-                                        File.SetLastWriteTime(Destination + newName, message.Date);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (Conversation.Message.Photo photo in message.Photos)
-                                {
-                                    if (File.Exists(Location + photo.Uri))
-                                    {
+                                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
+                                             string date = message.Date.ToString("yyyyMMdd_HHmmss");
+                                             string newName = photo.Uri.Replace(Path.GetFileNameWithoutExtension(photo.Uri), date);
+                                             File.Copy(Location + photo.Uri, Destination + newName);
+                                             File.SetCreationTime(Destination + newName, message.Date);
+                                             File.SetLastAccessTime(Destination + newName, message.Date);
+                                             File.SetLastWriteTime(Destination + newName, message.Date);
+                                         }
+                                     }
+                                 }
+                                 else
+                                 {
+                                     foreach (Conversation.Message.Photo photo in message.Photos)
+                                     {
+                                         if (File.Exists(Location + photo.Uri))
+                                         {
                                              if (OnProgressUpdateList != null)
                                              {
                                                  OnProgressUpdateList(photo.Uri);
                                              }
-                                        Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
-                                        File.Copy(Location + photo.Uri, Destination + photo.Uri);
-                                        File.SetCreationTime(Destination + photo.Uri, message.Date);
-                                        File.SetLastAccessTime(Destination + photo.Uri, message.Date);
-                                        File.SetLastWriteTime(Destination + photo.Uri, message.Date);
-                                    }
-                                }
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            if (message.Photos.Exists(s => s.Uri.Contains("stickers_used")))
-                            {
-                                if (OnProgressUpdateList != null)
-                                {
-                                    OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Photos.Find(url => url.Uri.Contains("stickers_used")).Uri)} is a sticker, skipping");
-                                }
-                            }
-                            else
-                            {
-                                DateTime dateNewName = message.Date;
-                                string date = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                string newNameException = message.Photos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Photos.First().Uri), date);
-                                while (File.Exists(Destination + newNameException))
-                                {
-                                    if (OnProgressUpdateList != null)
-                                    {
-                                        OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Photos.First().Uri)} file with same date as name already exists at target location!");
-                                        OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
-                                    }
-                                    dateNewName = dateNewName.AddSeconds(1);
-                                    string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                    newNameException = message.Photos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Photos.First().Uri), dateFixed);
-                                }
-                                File.Copy(Location + message.Photos.First().Uri, Destination + newNameException);
-                                File.SetCreationTime(Destination + newNameException, message.Date);
-                                File.SetLastAccessTime(Destination + newNameException, message.Date);
-                                File.SetLastWriteTime(Destination + newNameException, message.Date);
-                            }
-                        }
-                    }
-                    if (!(message.Gifs is null))
-                    {
-                        try
-                        {
-                            if (isChecked == true)
-                            {
-                                foreach (Conversation.Message.Gif gif in message.Gifs)
-                                {
-                                    if (File.Exists(Location + gif.Uri))
-                                    {
+                                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
+                                             File.Copy(Location + photo.Uri, Destination + photo.Uri);
+                                             File.SetCreationTime(Destination + photo.Uri, message.Date);
+                                             File.SetLastAccessTime(Destination + photo.Uri, message.Date);
+                                             File.SetLastWriteTime(Destination + photo.Uri, message.Date);
+                                         }
+                                     }
+                                 }
+                             }
+                             catch (IOException e)
+                             {
+                                 if (message.Photos.Exists(s => s.Uri.Contains("stickers_used")))
+                                 {
+                                     if (OnProgressUpdateList != null)
+                                     {
+                                         OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Photos.Find(url => url.Uri.Contains("stickers_used")).Uri)} is a sticker, skipping");
+                                     }
+                                 }
+                                 else
+                                 {
+                                     DateTime dateNewName = message.Date;
+                                     string date = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                     string newNameException = message.Photos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Photos.First().Uri), date);
+                                     while (File.Exists(Destination + newNameException))
+                                     {
+                                         if (OnProgressUpdateList != null)
+                                         {
+                                             OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Photos.First().Uri)} file with same date as name already exists at target location!");
+                                             OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
+                                         }
+                                         dateNewName = dateNewName.AddSeconds(1);
+                                         string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                         newNameException = message.Photos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Photos.First().Uri), dateFixed);
+                                     }
+                                     File.Copy(Location + message.Photos.First().Uri, Destination + newNameException);
+                                     File.SetCreationTime(Destination + newNameException, message.Date);
+                                     File.SetLastAccessTime(Destination + newNameException, message.Date);
+                                     File.SetLastWriteTime(Destination + newNameException, message.Date);
+                                 }
+                             }
+                         }
+                         if (!(message.Gifs is null))
+                         {
+                             try
+                             {
+                                 if (isChecked == true)
+                                 {
+                                     foreach (Conversation.Message.Gif gif in message.Gifs)
+                                     {
+                                         if (File.Exists(Location + gif.Uri))
+                                         {
                                              if (OnProgressUpdateList != null)
                                              {
                                                  OnProgressUpdateList(gif.Uri);
                                              }
-                                        Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
-                                        string date = message.Date.ToString("yyyyMMdd_HHmmss");
-                                        string newName = gif.Uri.Replace(Path.GetFileNameWithoutExtension(gif.Uri), date);
-                                        File.Copy(Location + gif.Uri, Destination + newName);
-                                        File.SetCreationTime(Destination + newName, message.Date);
-                                        File.SetLastAccessTime(Destination + newName, message.Date);
-                                        File.SetLastWriteTime(Destination + newName, message.Date);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (Conversation.Message.Gif gif in message.Gifs)
-                                {
-                                    if (File.Exists(Location + gif.Uri))
-                                    {
+                                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
+                                             string date = message.Date.ToString("yyyyMMdd_HHmmss");
+                                             string newName = gif.Uri.Replace(Path.GetFileNameWithoutExtension(gif.Uri), date);
+                                             File.Copy(Location + gif.Uri, Destination + newName);
+                                             File.SetCreationTime(Destination + newName, message.Date);
+                                             File.SetLastAccessTime(Destination + newName, message.Date);
+                                             File.SetLastWriteTime(Destination + newName, message.Date);
+                                         }
+                                     }
+                                 }
+                                 else
+                                 {
+                                     foreach (Conversation.Message.Gif gif in message.Gifs)
+                                     {
+                                         if (File.Exists(Location + gif.Uri))
+                                         {
                                              if (OnProgressUpdateList != null)
                                              {
                                                  OnProgressUpdateList(gif.Uri);
                                              }
-                                        Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
-                                        File.Copy(Location + gif.Uri, Destination + gif.Uri);
-                                        File.SetCreationTime(Destination + gif.Uri, message.Date);
-                                        File.SetLastAccessTime(Destination + gif.Uri, message.Date);
-                                        File.SetLastWriteTime(Destination + gif.Uri, message.Date);
-                                    }
-                                }
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            if (message.Gifs.Exists(s => s.Uri.Contains("stickers_used")))
-                            {
-                                if (OnProgressUpdateList != null)
-                                {
-                                    OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Gifs.Find(url => url.Uri.Contains("stickers_used")).Uri)} is a sticker, skipping");
-                                }
-                            }
-                            else
-                            {
-                                DateTime dateNewName = message.Date;
-                                string date = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                string newNameException = message.Gifs.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Gifs.First().Uri), date);
-                                while (File.Exists(Destination + newNameException))
-                                {
-                                    if (OnProgressUpdateList != null)
-                                    {
-                                        OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Gifs.First().Uri)} file with same date as name already exists at target location!");
-                                        OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
-                                    }
-                                    dateNewName = dateNewName.AddSeconds(1);
-                                    string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                    newNameException = message.Gifs.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Gifs.First().Uri), dateFixed);
-                                }
-                                File.Copy(Location + message.Gifs.First().Uri, Destination + newNameException);
-                                File.SetCreationTime(Destination + newNameException, message.Date);
-                                File.SetLastAccessTime(Destination + newNameException, message.Date);
-                                File.SetLastWriteTime(Destination + newNameException, message.Date);
-                            }
-                        }
-                    }
-                    if (!(message.Videos is null))
-                    {
-                        try
-                        {
-                            if (isChecked == true)
-                            {
-                                foreach (Conversation.Message.Video video in message.Videos)
-                                {
-                                    if (File.Exists(Location + video.Uri))
-                                    {
+                                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
+                                             File.Copy(Location + gif.Uri, Destination + gif.Uri);
+                                             File.SetCreationTime(Destination + gif.Uri, message.Date);
+                                             File.SetLastAccessTime(Destination + gif.Uri, message.Date);
+                                             File.SetLastWriteTime(Destination + gif.Uri, message.Date);
+                                         }
+                                     }
+                                 }
+                             }
+                             catch (IOException e)
+                             {
+                                 if (message.Gifs.Exists(s => s.Uri.Contains("stickers_used")))
+                                 {
+                                     if (OnProgressUpdateList != null)
+                                     {
+                                         OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Gifs.Find(url => url.Uri.Contains("stickers_used")).Uri)} is a sticker, skipping");
+                                     }
+                                 }
+                                 else
+                                 {
+                                     DateTime dateNewName = message.Date;
+                                     string date = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                     string newNameException = message.Gifs.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Gifs.First().Uri), date);
+                                     while (File.Exists(Destination + newNameException))
+                                     {
+                                         if (OnProgressUpdateList != null)
+                                         {
+                                             OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Gifs.First().Uri)} file with same date as name already exists at target location!");
+                                             OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
+                                         }
+                                         dateNewName = dateNewName.AddSeconds(1);
+                                         string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                         newNameException = message.Gifs.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Gifs.First().Uri), dateFixed);
+                                     }
+                                     File.Copy(Location + message.Gifs.First().Uri, Destination + newNameException);
+                                     File.SetCreationTime(Destination + newNameException, message.Date);
+                                     File.SetLastAccessTime(Destination + newNameException, message.Date);
+                                     File.SetLastWriteTime(Destination + newNameException, message.Date);
+                                 }
+                             }
+                         }
+                         if (!(message.Videos is null))
+                         {
+                             try
+                             {
+                                 if (isChecked == true)
+                                 {
+                                     foreach (Conversation.Message.Video video in message.Videos)
+                                     {
+                                         if (File.Exists(Location + video.Uri))
+                                         {
                                              if (OnProgressUpdateList != null)
                                              {
                                                  OnProgressUpdateList(video.Uri);
                                              }
-                                        Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
-                                        string date = message.Date.ToString("yyyyMMdd_HHmmss");
-                                        string newName = video.Uri.Replace(Path.GetFileNameWithoutExtension(video.Uri), date);
-                                        File.Copy(Location + video.Uri, Destination + newName);
-                                        File.SetCreationTime(Destination + newName, message.Date);
-                                        File.SetLastAccessTime(Destination + newName, message.Date);
-                                        File.SetLastWriteTime(Destination + newName, message.Date);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (Conversation.Message.Video video in message.Videos)
-                                {
-                                    if (File.Exists(Location + video.Uri))
-                                    {
+                                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
+                                             string date = message.Date.ToString("yyyyMMdd_HHmmss");
+                                             string newName = video.Uri.Replace(Path.GetFileNameWithoutExtension(video.Uri), date);
+                                             File.Copy(Location + video.Uri, Destination + newName);
+                                             File.SetCreationTime(Destination + newName, message.Date);
+                                             File.SetLastAccessTime(Destination + newName, message.Date);
+                                             File.SetLastWriteTime(Destination + newName, message.Date);
+                                         }
+                                     }
+                                 }
+                                 else
+                                 {
+                                     foreach (Conversation.Message.Video video in message.Videos)
+                                     {
+                                         if (File.Exists(Location + video.Uri))
+                                         {
                                              if (OnProgressUpdateList != null)
                                              {
                                                  OnProgressUpdateList(video.Uri);
                                              }
-                                        Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
-                                        File.Copy(Location + video.Uri, Destination + video.Uri);
-                                        File.SetCreationTime(Destination + video.Uri, message.Date);
-                                        File.SetLastAccessTime(Destination + video.Uri, message.Date);
-                                        File.SetLastWriteTime(Destination + video.Uri, message.Date);
-                                    }
-                                }
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            if (message.Videos.Exists(s => s.Uri.Contains("stickers_used")))
-                            {
-                                if (OnProgressUpdateList != null)
-                                {
-                                    OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Videos.Find(url => url.Uri.Contains("stickers_used")).Uri)} is a sticker, skipping");
-                                }
-                            }
-                            else
-                            {
-                                DateTime dateNewName = message.Date;
-                                string date = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                string newNameException = message.Videos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Videos.First().Uri), date);
-                                while (File.Exists(Destination + newNameException))
-                                {
-                                    if (OnProgressUpdateList != null)
-                                    {
-                                        OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Videos.First().Uri)} file with same date as name already exists at target location!");
-                                        OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
-                                    }
-                                    dateNewName = dateNewName.AddSeconds(1);
-                                    string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                    newNameException = message.Videos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Videos.First().Uri), dateFixed);
-                                }
-                                File.Copy(Location + message.Videos.First().Uri, Destination + newNameException);
-                                File.SetCreationTime(Destination + newNameException, message.Date);
-                                File.SetLastAccessTime(Destination + newNameException, message.Date);
-                                File.SetLastWriteTime(Destination + newNameException, message.Date);
-                            }
-                        }
-                    }
+                                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
+                                             File.Copy(Location + video.Uri, Destination + video.Uri);
+                                             File.SetCreationTime(Destination + video.Uri, message.Date);
+                                             File.SetLastAccessTime(Destination + video.Uri, message.Date);
+                                             File.SetLastWriteTime(Destination + video.Uri, message.Date);
+                                         }
+                                     }
+                                 }
+                             }
+                             catch (IOException e)
+                             {
+                                 if (message.Videos.Exists(s => s.Uri.Contains("stickers_used")))
+                                 {
+                                     if (OnProgressUpdateList != null)
+                                     {
+                                         OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Videos.Find(url => url.Uri.Contains("stickers_used")).Uri)} is a sticker, skipping");
+                                     }
+                                 }
+                                 else
+                                 {
+                                     DateTime dateNewName = message.Date;
+                                     string date = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                     string newNameException = message.Videos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Videos.First().Uri), date);
+                                     while (File.Exists(Destination + newNameException))
+                                     {
+                                         if (OnProgressUpdateList != null)
+                                         {
+                                             OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Videos.First().Uri)} file with same date as name already exists at target location!");
+                                             OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
+                                         }
+                                         dateNewName = dateNewName.AddSeconds(1);
+                                         string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
+                                         newNameException = message.Videos.First().Uri.Replace(Path.GetFileNameWithoutExtension(message.Videos.First().Uri), dateFixed);
+                                     }
+                                     File.Copy(Location + message.Videos.First().Uri, Destination + newNameException);
+                                     File.SetCreationTime(Destination + newNameException, message.Date);
+                                     File.SetLastAccessTime(Destination + newNameException, message.Date);
+                                     File.SetLastWriteTime(Destination + newNameException, message.Date);
+                                 }
+                             }
+                         }
 
 
-                }
-            }
-            if (OnProgressUpdateList != null)
-            {
-                {
+                     }
+                 }
+                 if (OnProgressUpdateList != null)
+                 {
+                     {
                          await OnProgressUpdateList("Done!");
-                }
-            }
+                     }
+                 }
              });
         }
 
@@ -434,10 +434,10 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
             int count = 0;
             await Task.Run(() =>
             {
-            foreach (JsonFile file in jsonFiles)
-            {
-                count = +file.Conversation.Messages.Count;
-            }
+                foreach (JsonFile file in jsonFiles)
+                {
+                    count = +file.Conversation.Messages.Count;
+                }
             });
             return count;
         }
