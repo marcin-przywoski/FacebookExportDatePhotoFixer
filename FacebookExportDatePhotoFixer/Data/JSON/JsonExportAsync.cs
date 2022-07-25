@@ -43,12 +43,21 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
         {
             if (File.Exists(Location + "/preferences/language_and_locale.json"))
             {
+                await Task.Run(async () =>
+                {
                 string preferencesLocation = Location + "/preferences/language_and_locale.json";
-                string json = File.ReadAllText(preferencesLocation);
+                    Task<string> jsonTask = File.ReadAllTextAsync(preferencesLocation);
+                    string json = await jsonTask;
                 JObject jsonObj = JObject.Parse(json);
                 string locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value");
                 Language = new CultureInfo(locale, false);
+                    if (OnProgressUpdateList != null)
+                    {
+                        OnProgressUpdateList("Export language : " + Language);
             }
+                });
+
+        }
         }
 
         public async Task GetExportFiles()
