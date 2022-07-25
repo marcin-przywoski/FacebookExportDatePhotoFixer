@@ -5,15 +5,15 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/marcin-przywoski/FacebookExportDatePhotoFixer)
 [![Downloads](https://img.shields.io/github/downloads/marcin-przywoski/FacebookExportDatePhotoFixer/total)](https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer/releases)
 
-This application is used to embed dates (Creation Time, Last Access Time, Last Write Time) back into the media contained in the Facebook Export as by default these are stripped. Currently it works only for HTML exports and selected media formats (GIF / JPG / MP4 / PNG).
+This application is used to embed dates (Creation Time, Last Access Time, Last Write Time) back into the media contained in the Facebook Export as by default these are stripped. Currently it works for both HTML and JSON exports and selected media formats (GIF / JPG / MP4 / PNG).
 I've created it as there was no tool available for easy use that allowed to instantly embed dates from Messenger HTML files back into saved media and copy them to another location to keep original files in place.  
-In case of any issues just post a new issue and I'll fix it - it will be a great opportunity for learning.
+In case of any issues just post a new issue and I'll fix it - it will be a great opportunity for learning. Same goes for improvements!
 ## Installation 
 Download the repository and compile it by yourself in VS Code or VS or download the compiled package from the Packages section
 I've added pre-compiled self contained packages if you don't have .NET core runtime installed
 
 ## Requirements
-- .NET 5 runtime or .NET 3.1 runtime if you want to compile it for yourself
+- .NET 5 runtime, .NET 6 runtime or .NET 3.1 runtime if you want to compile it for yourself
 
 ## Road map
 
@@ -29,7 +29,7 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
 - Add an option to choose only selected media types
 
-- Add an option to choose only selected conversations
+- Add an option to choose only selected conversations (both via a direct select of desired folder as well as after inital scanning of export folder)
 
 - Add ability to embed date into EXIF meta-data
 
@@ -38,6 +38,12 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 - Add an option to put everything in one folder instead of creating replication of original folder structure 
 
 - Add ability to overwrite existing files in source directory
+
+- Improve performance of the application with the usage of parallelism
+
+- Fix bottleneck on updating UI by batching them
+
+- Make program working on MacOS and Linux
 
 - (Possibly in the future) Rewrite application to a full fledged application for viewing exported Messenger conversations with added functionality
 
@@ -51,4 +57,4 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
   
 ## Lessons Learned
 
-This is my first published project on GitHub and I've learned how to use threads to update UI via Dispatcher as well as how to use external libraries in order to not re-invent the wheel :)
+This is my first published project on GitHub and I've learned how to use threads to update UI from other threads, how to use async / await as well as how to use external libraries in order to not re-invent the wheel :)
