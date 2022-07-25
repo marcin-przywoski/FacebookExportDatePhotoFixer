@@ -170,12 +170,14 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         }
 
-        public void ProcessHtmlFiles(CheckBox changeNameCheckbox)
+        public async Task ProcessHtmlFiles(CheckBox changeNameCheckbox)
         {
+            await Task.Run(async () =>
+            {
             if (OnProgressUpdateBar != null)
             {
                 OnProgressUpdateBar(0);
-                OnProgressUpdateBar(GetAmountOfMessagesInExport(HtmlList));
+                    OnProgressUpdateBar(await GetAmountOfMessagesInExport(HtmlList));
             }
 
             foreach (HtmlFile file in HtmlList)
@@ -262,6 +264,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                     OnProgressUpdateList("Done!");
                 }
             }
+            });
+
         }
 
         private int GetAmountOfMessagesInExport(List<HtmlFile> htmlFiles)
