@@ -27,14 +27,16 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         public CultureInfo Language { get; set; }
 
-        public FacebookExport( string location, string destination)
+        public FacebookExport(string location, string destination)
         {
             Location = location;
             Destination = destination;
         }
 
-        public void GetLanguage()
+        public async Task GetLanguage()
         {
+            await Task.Run(async () =>
+            {
             if (File.Exists(Location + "/about_you/preferences.html"))
             {
                 string preferencesLocation = Location + "/about_you/preferences.html";
@@ -51,7 +53,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                 string locale = htmlDocument.DocumentNode.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]").InnerText;
                 Language = new CultureInfo(locale, false);
             }
-
+            });
         }
 
         public void GetHtmlFiles()
