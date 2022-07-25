@@ -428,16 +428,18 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
             }
              });
         }
-        public Task<int> GetAmountOfMessagesInExport(List<JsonFile> jsonFiles)
+
+        public async ValueTask<int> GetAmountOfMessagesInExport(List<JsonFile> jsonFiles)
         {
             int count = 0;
-
+            await Task.Run(() =>
+            {
             foreach (JsonFile file in jsonFiles)
             {
                 count = +file.Conversation.Messages.Count;
             }
-
-            return Task.FromResult(count);
+            });
+            return count;
         }
     }
 }
