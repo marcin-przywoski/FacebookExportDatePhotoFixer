@@ -101,8 +101,10 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         }
 
-        public void GetMessagesFromHtmlFiles()
+        public async Task GetMessagesFromHtmlFiles()
         {
+            await Task.Run(async () =>
+             {
             if (OnProgressUpdateBar != null)
             {
                 OnProgressUpdateBar(HtmlList.Count);
@@ -156,7 +158,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                 }
                 if (OnProgressUpdateList != null)
                 {
-                    if(file.MessagesCount !=0)
+                         if (file.MessagesCount != 0)
                     {
                         OnProgressUpdateList($"There is {file.MessagesCount} of messages with linked media");
                     }
@@ -164,6 +166,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
             }
             HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
+             });
+
         }
 
         public void ProcessHtmlFiles(CheckBox changeNameCheckbox)
