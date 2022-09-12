@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using System.Printing;
+using FacebookExportDatePhotoFixer.Data.JSON.Entities;
 
 namespace FacebookExportDatePhotoFixer.Data.JSON
 {
@@ -181,8 +182,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                  }
 
                  foreach (JsonFile file in JsonList)
-                 {
-                     foreach (Conversation.Message message in file.Conversation.Messages)
+                     foreach (Message message in file.Conversation.Messages)
                      {
                          if (OnProgressUpdateBar != null)
                          {
@@ -197,7 +197,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                              {
                                  if (isChecked == true)
                                  {
-                                     foreach (Conversation.Message.Photo photo in message.Photos)
+                                     foreach (Photo photo in message.Photos)
                                      {
                                          if (File.Exists(Location + photo.Uri))
                                          {
@@ -217,7 +217,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                  }
                                  else
                                  {
-                                     foreach (Conversation.Message.Photo photo in message.Photos)
+                                     foreach (Photo photo in message.Photos)
                                      {
                                          if (File.Exists(Location + photo.Uri))
                                          {
@@ -272,7 +272,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                              {
                                  if (isChecked == true)
                                  {
-                                     foreach (Conversation.Message.Gif gif in message.Gifs)
+                                     foreach (Gif gif in message.Gifs)
                                      {
                                          if (File.Exists(Location + gif.Uri))
                                          {
@@ -292,7 +292,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                  }
                                  else
                                  {
-                                     foreach (Conversation.Message.Gif gif in message.Gifs)
+                                     foreach (Gif gif in message.Gifs)
                                      {
                                          if (File.Exists(Location + gif.Uri))
                                          {
@@ -347,7 +347,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                              {
                                  if (isChecked == true)
                                  {
-                                     foreach (Conversation.Message.Video video in message.Videos)
+                                     foreach (Video video in message.Videos)
                                      {
                                          if (File.Exists(Location + video.Uri))
                                          {
@@ -367,7 +367,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                                  }
                                  else
                                  {
-                                     foreach (Conversation.Message.Video video in message.Videos)
+                                     foreach (Video video in message.Videos)
                                      {
                                          if (File.Exists(Location + video.Uri))
                                          {
