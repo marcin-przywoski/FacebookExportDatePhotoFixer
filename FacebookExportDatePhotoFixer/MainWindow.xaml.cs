@@ -78,10 +78,10 @@ namespace FacebookExportDatePhotoFixer
                     jsonExportAsync.OnProgressUpdateBar += Export_OnProgressUpdateBar;
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
-                    await jsonExportAsync.GetLanguage().ConfigureAwait(true);
-                    await jsonExportAsync.GetExportFiles().ConfigureAwait(true);
-                    await jsonExportAsync.GetMessagesFromExportFiles().ConfigureAwait(true);
-                    await jsonExportAsync.ProcessExportFiles(changeNamesToDates).ConfigureAwait(true);
+                    await jsonExportAsync.GetLanguage();
+                    await jsonExportAsync.GetExportFiles();
+                    await jsonExportAsync.GetMessagesFromExportFiles();
+                    await jsonExportAsync.ProcessExportFiles(changeNamesToDates);
                     stopwatch.Stop();
                     await Dispatcher.InvokeAsync(() =>
                     {
