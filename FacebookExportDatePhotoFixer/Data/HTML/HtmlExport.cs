@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using FacebookExportDatePhotoFixer.Interfaces;
 using HtmlAgilityPack;
 
 namespace FacebookExportDatePhotoFixer.Data.HTML
 {
-    class FacebookExport
+    class HtmlExport
     {
         public delegate Task ProgressUpdate(string value);
 
@@ -24,7 +26,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         public CultureInfo Language { get; set; }
 
-        public FacebookExport(string location, string destination)
+        public HtmlExport(string location, string destination)
         {
             Location = location;
             Destination = destination;
@@ -53,7 +55,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
             });
         }
 
-        public async Task GetHtmlFiles()
+        public async Task GetExportFiles()
         {
             await Task.Run(async () =>
             {
@@ -95,68 +97,67 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                     OnProgressUpdateList("Found " + HtmlList.Count + " HTML files to process");
                 }
             });
-
         }
 
-        public async Task GetMessagesFromHtmlFiles()
+        public async Task GetMessagesFromExportFiles()
         {
             await Task.Run(async () =>
-             {
-                 Parallel.ForEach(HtmlList, file =>
-                 {
-                     if (OnProgressUpdateList != null)
-                     {
-                         OnProgressUpdateList("Processing : " + file.Location);
-                     }
+            {
+                Parallel.ForEach(HtmlList, file =>
+                {
+                    if (OnProgressUpdateList != null)
+                    {
+                        OnProgressUpdateList("Processing : " + file.Location);
+                    }
 
-                     HtmlDocument htmlDocument = new HtmlDocument();
-                     htmlDocument.Load(file.Location);
-                     HtmlNodeCollection divs = htmlDocument.DocumentNode.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
+                    HtmlDocument htmlDocument = new HtmlDocument();
+                    htmlDocument.Load(file.Location);
+                    HtmlNodeCollection divs = htmlDocument.DocumentNode.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
 
-                     foreach (HtmlNode node in divs)
-                     {
-                         if (node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
-                         {
-
-
-                             if (node.SelectSingleNode(".//a[@href]") != null)
-                             {
-                                 string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
-
-                                 if (!href.StartsWith("http") || !href.StartsWith("https"))
-                                 {
-                                     if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
-                                     {
-
-                                         DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, Language);
-
-                                         HtmlNode link = node.SelectSingleNode(".//a[@href]");
-
-                                         if (File.Exists(Location + href))
-                                         {
-                                             file.ListOfMessages.Add(new Message(date, href));
-                                         }
+                    foreach (HtmlNode node in divs)
+                    {
+                        if (node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
+                        {
 
 
-                                     }
-                                 }
-                             }
-                         }
-                     }
-                     if (OnProgressUpdateList != null)
-                     {
-                         if (file.MessagesCount != 0)
-                         {
-                             OnProgressUpdateList($"There is {file.MessagesCount} of messages with linked media");
-                         }
-                     }
-                 });
-                 HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
-             });
+                            if (node.SelectSingleNode(".//a[@href]") != null)
+                            {
+                                string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
+
+                                if (!href.StartsWith("http") || !href.StartsWith("https"))
+                                {
+                                    if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
+                                    {
+
+                                        DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, Language);
+
+                                        HtmlNode link = node.SelectSingleNode(".//a[@href]");
+
+                                        if (File.Exists(Location + href))
+                                        {
+                                            file.ListOfMessages.Add(new Message(date, href));
+                                        }
+
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (OnProgressUpdateList != null)
+                    {
+                        if (file.MessagesCount != 0)
+                        {
+                            OnProgressUpdateList($"There is {file.MessagesCount} of messages with linked media");
+                        }
+                    }
+                });
+                HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
+            });
 
         }
 
-        public async Task ProcessHtmlFiles(CheckBox changeNameCheckbox)
+        public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
             await Task.Run(async () =>
             {
