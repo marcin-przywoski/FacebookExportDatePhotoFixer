@@ -25,11 +25,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
         public delegate Task ProgressUpdate(string value);
 
-        public delegate Task BarUpdate(int value);
-
         public event ProgressUpdate OnProgressUpdateList;
-
-        public event BarUpdate OnProgressUpdateBar;
 
         public List<JsonFile> JsonList { get; } = new List<JsonFile>();
 
@@ -120,11 +116,6 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
         public async Task GetMessagesFromExportFiles()
         {
-                if (OnProgressUpdateBar != null)
-                {
-                    OnProgressUpdateBar(JsonList.Count);
-                }
-
             List<int> numTasks = new List<int>();
             numTasks.AddRange(Enumerable.Range(0, JsonList.Count).ToList());
 
@@ -144,16 +135,6 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     }
         public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
-                 if (OnProgressUpdateBar != null)
-                 {
-                     OnProgressUpdateBar(0);
-                 }
-
-                 if (OnProgressUpdateBar != null)
-                 {
-                     await OnProgressUpdateBar(await GetAmountOfMessagesInExport(JsonList));
-                 }
-
             List<int> numTasks = new List<int>();
             numTasks.AddRange(Enumerable.Range(0, JsonList.Count).ToList());
 
