@@ -123,32 +123,6 @@ namespace FacebookExportDatePhotoFixer
                });
         }
 
-        private async Task Export_OnProgressUpdateBar(int value)
-        {
-            if (value > 1)
-            {
-                await Dispatcher.InvokeAsync(() =>
-                  {
-                    Progress.Maximum = value;
-                  });
-            }
-            else if (value == 1)
-            {
-                await Dispatcher.InvokeAsync(() =>
-                  {
-                    Progress.Value++;
-                  });
-            }
-            else if (value == 0)
-            {
-                await Dispatcher.InvokeAsync(() =>
-                  {
-                    Progress.Value = 0;
-                });
-            }
-
-        }
-
         private string CheckExportType(string Location)
         {
             string[] json = Directory.GetFiles(Location, "*.json", SearchOption.AllDirectories);
