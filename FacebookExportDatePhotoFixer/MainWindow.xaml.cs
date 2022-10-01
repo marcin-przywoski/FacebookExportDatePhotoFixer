@@ -93,7 +93,6 @@ namespace FacebookExportDatePhotoFixer
                 {
                     FacebookExport facebookExport = new FacebookExport(exportLocation, destination);
                     facebookExport.OnProgressUpdateList += Export_OnProgressUpdateList;
-                    facebookExport.OnProgressUpdateBar += Export_OnProgressUpdateBar;
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
                     await facebookExport.GetLanguage().ConfigureAwait(true);

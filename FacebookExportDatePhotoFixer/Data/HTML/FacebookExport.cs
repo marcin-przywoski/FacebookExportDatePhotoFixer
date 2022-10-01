@@ -14,11 +14,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
     {
         public delegate Task ProgressUpdate(string value);
 
-        public delegate Task BarUpdate(int value);
-
         public event ProgressUpdate OnProgressUpdateList;
 
-        public event BarUpdate OnProgressUpdateBar;
         public List<HtmlFile> HtmlList { get; } = new List<HtmlFile>();
 
         public string Location { get; set; }
@@ -105,21 +102,11 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
         {
             await Task.Run(async () =>
              {
-                 if (OnProgressUpdateBar != null)
-                 {
-                     OnProgressUpdateBar(HtmlList.Count);
-                 }
-
-                 foreach (HtmlFile file in HtmlList)
+                 Parallel.ForEach(HtmlList, file =>
                  {
                      if (OnProgressUpdateList != null)
                      {
                          OnProgressUpdateList("Processing : " + file.Location);
-                     }
-
-                     if (OnProgressUpdateBar != null)
-                     {
-                         OnProgressUpdateBar(1);
                      }
 
                      HtmlDocument htmlDocument = new HtmlDocument();
@@ -163,8 +150,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                              OnProgressUpdateList($"There is {file.MessagesCount} of messages with linked media");
                          }
                      }
-
-                 }
+                 });
                  HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
              });
 
@@ -174,21 +160,10 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
         {
             await Task.Run(async () =>
             {
-                if (OnProgressUpdateBar != null)
-                {
-                    OnProgressUpdateBar(0);
-                    OnProgressUpdateBar(await GetAmountOfMessagesInExport(HtmlList));
-                }
-
                 foreach (HtmlFile file in HtmlList)
                 {
                     foreach (Message message in file.ListOfMessages)
                     {
-                        if (OnProgressUpdateBar != null)
-                        {
-                            OnProgressUpdateBar(1);
-                        }
-
                         bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
 
                         try

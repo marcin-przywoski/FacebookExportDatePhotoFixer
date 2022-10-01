@@ -81,25 +81,6 @@
             FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"
             Grid.Column="1"
             Text=" "/>
-            <ProgressBar
-            x:Name="Progress"
-            Grid.Row="6"
-            Grid.ColumnSpan="7"
-            Height="15"
-            Maximum="100"
-            Minimum="0"
-            Value="{Binding WorkerState}" Grid.Column="1" Margin="0,0,0,7" />
-            <TextBlock
-            Grid.Row="6"
-            Grid.Column="4"
-            Width="0"
-            Height="16"
-            Margin="70,30,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            FontWeight="Bold"
-            Text="{Binding WorkerState, StringFormat={}{0:0}%}"
-            TextAlignment="Center" />
             <Label x:Name="SourceLocationLabel" Content="Source location : " Grid.Row="1" VerticalAlignment="Center" FontSize="16" FontWeight="Normal" FontStyle="Normal" Grid.ColumnSpan="6" Padding="0,0,0,0" HorizontalContentAlignment="Stretch" Height="23" Width="Auto" Grid.Column="1" HorizontalAlignment="Left"/>
             <Label x:Name="DestinationLocationLabel" Content="Destination location : " Grid.Row="2" VerticalAlignment="Center" FontSize="16" FontWeight="Normal" FontStyle="Normal" Grid.ColumnSpan="5" Padding="0,0,0,0" HorizontalContentAlignment="Stretch" Height="23" Width="Auto" Grid.Column="1" HorizontalAlignment="Left"/>
             <CheckBox x:Name="changeNamesToDates" Content="Change filenames to their date of being sent" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Grid.ColumnSpan="2" Style="{StaticResource MaterialDesignFilterChipOutlineCheckBox}" Margin="0,0,0,0"/>

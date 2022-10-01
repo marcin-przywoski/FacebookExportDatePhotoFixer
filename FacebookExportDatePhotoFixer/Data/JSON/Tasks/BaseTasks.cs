@@ -32,11 +32,6 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                await OnProgressUpdateList("Processing : " + json.Location);
             }
 
-            if (OnProgressUpdateBar != null)
-            {
-               await OnProgressUpdateBar(1);
-            }
-
             json.Conversation = JsonConvert.DeserializeObject<Conversation>(await File.ReadAllTextAsync(json.Location));
 
             int totalMessagesCount = json.Conversation.Messages.Count;
@@ -58,10 +53,6 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
         private async Task ProcessJson(JsonFile json, CheckBox changeNameCheckbox)
         {
-            // Create a scheduler that uses two threads.
-            //LimitedConcurrencyLevelTaskScheduler lcts = new LimitedConcurrencyLevelTaskScheduler(2);
-            //List<Task> tasks = new List<Task>();
-
             bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
 
             //List<Task> listOfTasks = new List<Task>().AddRange(ProcessMessage(Enumerable.Range(0, json.Conversation.Messages.Count)));
@@ -82,27 +73,10 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                 }));
             }
             await Task.WhenAll(tasks);
-
-
-            //foreach (JsonFile file in JsonList)
-            ////Parallel.ForEach(JsonList, file =>
-            //{
-
-            //}
         }
         internal async Task ProcessMessage(Message message, bool? isChecked)
         {
-            if (OnProgressUpdateBar != null)
-            {
-                OnProgressUpdateBar(1);
-            }
-
-            //FileStream sourceStream = new FileStream(Location);
-
             int _coresCount = Environment.ProcessorCount;
-
-
-            //sourceStream.Position = 0;
 
             switch (message)
             {
@@ -437,8 +411,6 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                 count = +file.Conversation.Messages.Count;
             }
             return Task.FromResult(count);
-            //return tcs.Task;
-            //return count;
         }
     }
 }
