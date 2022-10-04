@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -15,9 +17,9 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 {
     partial class HtmlExport
     {
-        public delegate Task ProgressUpdate(string value);
+        public Subject<string> outputLogSubject = new Subject<string>();
 
-        public event ProgressUpdate OnProgressUpdateList;
+        public IObservable<string> OutputLog => outputLogSubject.AsObservable();
 
         public List<HtmlFile> HtmlList { get; } = new List<HtmlFile>();
 
@@ -58,31 +60,22 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         public async Task GetExportFiles()
         {
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Export language : " + Language);
-                }
+            outputLogSubject.OnNext("Export language : " + Language + "\n");
 
                 List<string> listOfHtml = new List<string>();
                 string messagesLocation = Location + "/messages/archived_threads/";
 
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Gathering HTML files from archived threads...");
-                }
+            outputLogSubject.OnNext("Gathering HTML files from archived threads..." + "\n");
+
                 listOfHtml = Directory.GetFiles(messagesLocation, "*.html", SearchOption.AllDirectories).ToList();
 
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Gathering HTML files from filtered threads...");
-                }
+            outputLogSubject.OnNext("Gathering HTML files from filtered threads..." + "\n");
+
                 messagesLocation = Location + "/messages/filtered_threads/";
                 listOfHtml.AddRange(Directory.GetFiles(messagesLocation, "*.html", SearchOption.AllDirectories).ToList());
 
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Gathering HTML files from inbox...");
-                }
+            outputLogSubject.OnNext("Gathering HTML files from inbox..." + "\n");
+
                 messagesLocation = Location + "/messages/inbox/";
                 listOfHtml.AddRange(Directory.GetFiles(messagesLocation, "*.html", SearchOption.AllDirectories).ToList());
 
@@ -91,11 +84,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                     HtmlList.Add(new HtmlFile(htmlFile));
                 }
 
-                if (OnProgressUpdateList != null)
-                {
-                    OnProgressUpdateList("Found " + HtmlList.Count + " HTML files to process");
+            outputLogSubject.OnNext("Found " + HtmlList.Count + " HTML files to process" + "\n");
                 }
-        }
 
         public async Task GetMessagesFromExportFiles()
         {
@@ -143,12 +133,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                             }
             await Task.WhenAll(tasks);
 
-                if (OnProgressUpdateList != null)
-                {
-                    {
-                        OnProgressUpdateList("Done!");
-                    }
-                }
+            outputLogSubject.OnNext("Done!" + "\n");
+            outputLogSubject.OnCompleted();
         }
 
         private async Task<int> GetAmountOfMessagesInExport(List<HtmlFile> htmlFiles)

@@ -18,10 +18,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
     {
         private async Task GetMessages(HtmlFile html)
         {
-            if (OnProgressUpdateList != null)
-            {
-                OnProgressUpdateList($"Getting messeges from: {html.Location}");
-            }
+            outputLogSubject.OnNext($"Getting messeges from: {html.Location}" + "\n");
 
             HtmlDocument htmlDocument = new HtmlDocument();
             htmlDocument.Load(html.Location);
@@ -53,12 +50,10 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                 }
             }
             divs = null;
-            if (OnProgressUpdateList != null)
-            {
+
                 if (html.ListOfMessages.Count != 0)
                 {
-                    OnProgressUpdateList($"There is {html.MessagesCount} of messages with linked media");
-                }
+                   outputLogSubject.OnNext($"There is {html.MessagesCount} of messages with linked media" + "\n");
             }
         }
 
@@ -89,7 +84,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         private Task ProcessMessage(Message message, bool? isChecked)
         {
-            OnProgressUpdateList($"Processing: {message.Link}");
+            outputLogSubject.OnNext($"Processing: {message.Link}" + "\n");
 
             try
             {
@@ -116,7 +111,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
             {
                 if (message.Link.Contains("stickers_used"))
                 {
-                    OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Link)} is a sticker, skipping");
+                    outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(message.Link)} is a sticker, skipping" + "\n");
                 }
                 else
                 {
@@ -126,8 +121,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
                     while (File.Exists(Destination + newNameException))
                     {
-                        OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Link)} file with same date as name already exists at target location!");
-                        OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
+                        outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(message.Link)} file with same date as name already exists at target location!" + "\n");
+                        outputLogSubject.OnNext("Adding 1 second to filename to avoid I/O conflicts" + "\n");
 
                         dateNewName = dateNewName.AddSeconds(1);
                         string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
