@@ -132,6 +132,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                 }));
                         }
             await Task.WhenAll(tasks);
+
+            this.JsonList.RemoveAll(s=> s.Conversation.Messages.Count == 0);
                     }
         public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
