@@ -19,6 +19,8 @@ using System.IO;
 using FacebookExportDatePhotoFixer.Data.HTML;
 using FacebookExportDatePhotoFixer.Data.JSON;
 using System.Diagnostics;
+using System.Reactive.Linq;
+using System.Windows.Threading;
 
 namespace FacebookExportDatePhotoFixer
 {
@@ -74,8 +76,16 @@ namespace FacebookExportDatePhotoFixer
                 if (CheckExportType(exportLocation) == "json")
                 {
                     JsonExportAsync jsonExportAsync = new JsonExportAsync(exportLocation, destination);
-                    jsonExportAsync.OnProgressUpdateList += Export_OnProgressUpdateList;
-                    jsonExportAsync.OnProgressUpdateBar += Export_OnProgressUpdateBar;
+                    IObservable<IList<string>> buffer = jsonExportAsync.OutputLog.Buffer(TimeSpan.FromMilliseconds(1000), 6);
+                    IObservable<IList<string>> chunked = buffer.ObserveOnDispatcher(DispatcherPriority.Background);
+                    IDisposable update = chunked.Subscribe(name =>
+                    {
+                        foreach (string item in name)
+                        {
+                            OutputLog.AppendText(item);
+                        }
+                        OutputLog.ScrollToEnd();
+                    });
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
                     await jsonExportAsync.GetLanguage();
@@ -83,6 +93,8 @@ namespace FacebookExportDatePhotoFixer
                     await jsonExportAsync.GetMessagesFromExportFiles();
                     await jsonExportAsync.ProcessExportFiles(changeNamesToDates);
                     stopwatch.Stop();
+                    await chunked;
+                    await buffer;
                     await Dispatcher.InvokeAsync(() =>
                     {
                         OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}. Log saved to {destination} log.txt ");
@@ -91,15 +103,26 @@ namespace FacebookExportDatePhotoFixer
                 }
                 else if (CheckExportType(exportLocation) == "html")
                 {
-                    FacebookExport facebookExport = new FacebookExport(exportLocation, destination);
-                    facebookExport.OnProgressUpdateList += Export_OnProgressUpdateList;
+                    HtmlExport facebookExport = new HtmlExport(exportLocation, destination);
+                    IObservable<IList<string>> buffer = facebookExport.OutputLog.Buffer(TimeSpan.FromMilliseconds(1000), 6);
+                    IObservable<IList<string>> chunked = buffer.ObserveOnDispatcher(DispatcherPriority.Background);
+                    IDisposable update = chunked.Subscribe(name =>
+                    {
+                        foreach (string item in name)
+                        {
+                            OutputLog.AppendText(item);
+                        }
+                        OutputLog.ScrollToEnd();
+                    });
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
-                    await facebookExport.GetLanguage().ConfigureAwait(true);
-                    await facebookExport.GetHtmlFiles().ConfigureAwait(true);
-                    await facebookExport.GetMessagesFromHtmlFiles().ConfigureAwait(true);
-                    await facebookExport.ProcessHtmlFiles(changeNamesToDates).ConfigureAwait(true);
+                    await facebookExport.GetLanguage();
+                    await facebookExport.GetExportFiles();
+                    await facebookExport.GetMessagesFromExportFiles();
+                    await facebookExport.ProcessExportFiles(changeNamesToDates);
                     stopwatch.Stop();
+                    await chunked;
+                    await buffer;
                     await Dispatcher.InvokeAsync(() =>
                     {
                         OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}. Log saved to {destination} log.txt");
@@ -111,16 +134,6 @@ namespace FacebookExportDatePhotoFixer
                     MessageBox.Show("Location folder does not contain no HTML nor Json files!");
                 }
             }
-        }
-
-        private async Task Export_OnProgressUpdateList(string text)
-        {
-            await Dispatcher.InvokeAsync(() =>
-               {
-                   OutputLog.AppendText(text);
-                   OutputLog.AppendText(Environment.NewLine);
-                   OutputLog.ScrollToEnd();
-               });
         }
 
         private string CheckExportType(string Location)
