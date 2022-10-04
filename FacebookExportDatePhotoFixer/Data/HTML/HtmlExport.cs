@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -12,7 +13,7 @@ using HtmlAgilityPack;
 
 namespace FacebookExportDatePhotoFixer.Data.HTML
 {
-    class HtmlExport
+    partial class HtmlExport
     {
         public delegate Task ProgressUpdate(string value);
 
@@ -57,8 +58,6 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         public async Task GetExportFiles()
         {
-            await Task.Run(async () =>
-            {
                 if (OnProgressUpdateList != null)
                 {
                     OnProgressUpdateList("Export language : " + Language);
@@ -96,152 +95,60 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                 {
                     OnProgressUpdateList("Found " + HtmlList.Count + " HTML files to process");
                 }
-            });
         }
 
         public async Task GetMessagesFromExportFiles()
         {
-            await Task.Run(async () =>
-            {
-                Parallel.ForEach(HtmlList, file =>
-                {
-                    if (OnProgressUpdateList != null)
-                    {
-                        OnProgressUpdateList("Processing : " + file.Location);
-                    }
+            List<int> numTasks = new List<int>();
+            numTasks.AddRange(Enumerable.Range(0, HtmlList.Count).ToList());
 
-                    HtmlDocument htmlDocument = new HtmlDocument();
-                    htmlDocument.Load(file.Location);
-                    HtmlNodeCollection divs = htmlDocument.DocumentNode.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
-
-                    foreach (HtmlNode node in divs)
+            int _coresCount = Environment.ProcessorCount;
+            var tasks = new List<Task>();
+            var queue = new ConcurrentQueue<int>(numTasks);
+            for (int i = 0; i < _coresCount; i++)
                     {
-                        if (node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
+                tasks.Add(Task.Run(async () =>
                         {
-
-
-                            if (node.SelectSingleNode(".//a[@href]") != null)
+                    while (queue.TryDequeue(out int number))
                             {
-                                string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
 
-                                if (!href.StartsWith("http") || !href.StartsWith("https"))
-                                {
-                                    if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
-                                    {
-
-                                        DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, Language);
-
-                                        HtmlNode link = node.SelectSingleNode(".//a[@href]");
-
-                                        if (File.Exists(Location + href))
-                                        {
-                                            file.ListOfMessages.Add(new Message(date, href));
+                        await GetMessages(HtmlList[number]);
                                         }
-
-
+                }));
                                     }
-                                }
-                            }
-                        }
-                    }
-                    if (OnProgressUpdateList != null)
-                    {
-                        if (file.MessagesCount != 0)
-                        {
-                            OnProgressUpdateList($"There is {file.MessagesCount} of messages with linked media");
-                        }
-                    }
-                });
-                HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
-            });
+            await Task.WhenAll(tasks);
 
+                HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
         }
 
         public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
-            await Task.Run(async () =>
-            {
-                foreach (HtmlFile file in HtmlList)
-                {
-                    foreach (Message message in file.ListOfMessages)
-                    {
                         bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
 
-                        try
+            List<int> numTasks = new List<int>();
+            numTasks.AddRange(Enumerable.Range(0, HtmlList.Count).ToList());
+
+            int _coresCount = Environment.ProcessorCount;
+            var tasks = new List<Task>();
+            var queue = new ConcurrentQueue<int>(numTasks);
+            for (int i = 0; i < _coresCount; i++)
                         {
-                            if (isChecked == true)
+                tasks.Add(Task.Run(async () =>
                             {
-                                if (File.Exists(Location + message.Link))
+                    while (queue.TryDequeue(out int number))
                                 {
-                                    Directory.CreateDirectory(Path.GetDirectoryName(Destination + message.Link));
-                                    string date = message.Date.ToString("yyyyMMdd_HHmmss");
-                                    string newName = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link), date);
-                                    File.Copy(Location + message.Link, Destination + newName);
-                                    File.SetCreationTime(Destination + newName, message.Date);
-                                    File.SetLastAccessTime(Destination + newName, message.Date);
-                                    File.SetLastWriteTime(Destination + newName, message.Date);
+                        await ProcessHtml(HtmlList[number], changeNameCheckbox);
                                 }
+                }));
                             }
-                            else
-                            {
-                                if (File.Exists(Location + message.Link))
-                                {
-                                    Directory.CreateDirectory(Path.GetDirectoryName(Destination + message.Link));
-                                    File.Copy(Location + message.Link, Destination + message.Link);
-                                    File.SetCreationTime(Destination + message.Link, message.Date);
-                                    File.SetLastAccessTime(Destination + message.Link, message.Date);
-                                    File.SetLastWriteTime(Destination + message.Link, message.Date);
-                                }
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            if (message.Link.Contains("stickers_used"))
-                            {
-                                if (OnProgressUpdateList != null)
-                                {
-                                    OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Link)} is a sticker, skipping");
-                                }
-                            }
-                            else
-                            {
-                                DateTime dateNewName = message.Date;
-                                string date = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                string newNameException = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link), date);
+            await Task.WhenAll(tasks);
 
-                                while (File.Exists(Destination + newNameException))
-                                {
-                                    if (OnProgressUpdateList != null)
-                                    {
-                                        OnProgressUpdateList($" {Path.GetFileNameWithoutExtension(message.Link)} file with same date as name already exists at target location!");
-                                        OnProgressUpdateList("Adding 1 second to filename to avoid I/O conflicts");
-                                    }
-                                    dateNewName = dateNewName.AddSeconds(1);
-                                    string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
-                                    newNameException = message.Link.Replace(Path.GetFileNameWithoutExtension(message.Link), dateFixed);
-                                }
-                                File.Copy(Location + message.Link, Destination + newNameException);
-                                File.SetCreationTime(Destination + newNameException, message.Date);
-                                File.SetLastAccessTime(Destination + newNameException, message.Date);
-                                File.SetLastWriteTime(Destination + newNameException, message.Date);
-                            }
-
-
-
-
-
-                        }
-
-                    }
-                }
                 if (OnProgressUpdateList != null)
                 {
                     {
                         OnProgressUpdateList("Done!");
                     }
                 }
-            });
-
         }
 
         private async Task<int> GetAmountOfMessagesInExport(List<HtmlFile> htmlFiles)
