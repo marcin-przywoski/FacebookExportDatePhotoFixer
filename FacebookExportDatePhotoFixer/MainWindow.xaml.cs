@@ -96,8 +96,8 @@ namespace FacebookExportDatePhotoFixer
                     await buffer;
                     await Dispatcher.InvokeAsync(() =>
                     {
-                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}. Log saved to {destination} log.txt ");
                         File.WriteAllTextAsync(destination + "log.txt", OutputLog.Text);
+                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}." + "\n" + "Log saved to {destination} log.txt");
                     });
                 }
                 else if (CheckExportType(exportLocation) == "html")
@@ -123,8 +123,8 @@ namespace FacebookExportDatePhotoFixer
                     await buffer;
                     await Dispatcher.InvokeAsync(() =>
                     {
-                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}. Log saved to {destination} log.txt");
                         File.WriteAllTextAsync(destination + "log.txt", OutputLog.Text);
+                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}." + "\n" + $"Log saved to {destination} log.txt");
                     });
                 }
                 else if (CheckExportType(exportLocation) == "error")
