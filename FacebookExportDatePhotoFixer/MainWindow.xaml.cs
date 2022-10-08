@@ -59,7 +59,7 @@ namespace FacebookExportDatePhotoFixer
             {
                 DestinationLocationLabel.Content = "Destination location : ";
                 destination = chooseFolder.SelectedPath + "/";
-                DestinationLocationLabel.Content = DestinationLocationLabel.Content + chooseFolder.SelectedPath + "/";
+                DestinationLocationLabel.Content = DestinationLocationLabel.Content + destination;
                 DestinationLocationLabel.ToolTip = DestinationLocationLabel.Content;
             }
         }
