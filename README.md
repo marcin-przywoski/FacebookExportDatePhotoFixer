@@ -39,9 +39,9 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
 - Add ability to overwrite existing files in source directory
 
-- Improve performance of the application with the usage of parallelism
+- ~~Improve performance of the application with the usage of parallelism~~
 
-- Fix bottleneck on updating UI by batching them
+- ~~Fix bottleneck on updating UI by batching them~~
 
 - Make program working on MacOS and Linux
 
@@ -52,6 +52,7 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
  - [Html Agility Pack (HAP)](https://github.com/zzzprojects/html-agility-pack)
  - [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)
  - [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
+  - [System.Reactive](https://github.com/dotnet/reactive)
 
 
   
