@@ -75,14 +75,14 @@ namespace FacebookExportDatePhotoFixer
                 if (CheckExportType(exportLocation) == "json")
                 {
                     JsonExportAsync jsonExportAsync = new JsonExportAsync(exportLocation, destination);
-                    IObservable<IList<string>> buffer = jsonExportAsync.OutputLog.Buffer(TimeSpan.FromMilliseconds(1000), 6);
+                    IObservable<IList<string>> buffer = jsonExportAsync.OutputLog.Buffer(TimeSpan.FromMilliseconds(3000), 10);
                     IObservable<IList<string>> chunked = buffer.ObserveOnDispatcher(DispatcherPriority.Background);
                     IDisposable update = chunked.Subscribe(name =>
                     {
-                        foreach (string item in name)
-                        {
-                            OutputLog.AppendText(item);
-                        }
+                        string update = string.Join("", name);
+
+
+                       OutputLog.AppendText(update);
                         OutputLog.ScrollToEnd();
                     });
                     Stopwatch stopwatch = new Stopwatch();
@@ -103,14 +103,13 @@ namespace FacebookExportDatePhotoFixer
                 else if (CheckExportType(exportLocation) == "html")
                 {
                     HtmlExport facebookExport = new HtmlExport(exportLocation, destination);
-                    IObservable<IList<string>> buffer = facebookExport.OutputLog.Buffer(TimeSpan.FromMilliseconds(1000), 6);
+                    IObservable<IList<string>> buffer = facebookExport.OutputLog.Buffer(TimeSpan.FromMilliseconds(3000), 10);
                     IObservable<IList<string>> chunked = buffer.ObserveOnDispatcher(DispatcherPriority.Background);
                     IDisposable update = chunked.Subscribe(name =>
                     {
-                        foreach (string item in name)
-                        {
-                            OutputLog.AppendText(item);
-                        }
+                        string update = string.Join("", name);
+
+                        OutputLog.AppendText(update);
                         OutputLog.ScrollToEnd();
                     });
                     Stopwatch stopwatch = new Stopwatch();
