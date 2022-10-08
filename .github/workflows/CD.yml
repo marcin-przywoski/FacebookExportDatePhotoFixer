@@ -32,37 +32,37 @@ jobs:
         run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/framework-dependent --configuration Release -f net6.0-windows10.0.19041 --no-self-contained
 
       - name: Build & publish (v6.x) (self contained - dependencies included)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/self-contained-dependencies-included --configuration Release -f net6.0-windows10.0.19041 -r win-x64 --self-contained
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/self-contained-dependencies-included --configuration Release -f net6.0-windows10.0.19041 -r win-x64 --self-contained /p:PublishTrimmed=true
 
       - name: Build & publish (v6.x) (self contained - single file)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/self-contained-single-file -r win-x64 --self-contained --configuration Release -f net6.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/self-contained-single-file -r win-x64 --self-contained --configuration Release -f net6.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishTrimmed=true
 
       - name: Build & publish (v6.x) (self contained - single file ReadyToRun)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f net6.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f net6.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true /p:PublishTrimmed=true
 
       - name: Build & publish (v5.x) (framework dependant)
         run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/framework-dependent --configuration Release -f net5.0-windows10.0.19041 --no-self-contained
 
       - name: Build & publish (v5.x) (self contained - dependencies included)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/self-contained-dependencies-included --configuration Release -f net5.0-windows10.0.19041 -r win-x64 --self-contained
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/self-contained-dependencies-included --configuration Release -f net5.0-windows10.0.19041 -r win-x64 --self-contained /p:PublishTrimmed=true
 
       - name: Build & publish (v5.x) (self contained - single file)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/self-contained-single-file -r win-x64 --self-contained --configuration Release -f net5.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/self-contained-single-file -r win-x64 --self-contained --configuration Release -f net5.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishTrimmed=true
 
       - name: Build & publish (v5.x) (self contained - single file ReadyToRun)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f net5.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/net5.0-windows10.0.19041/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f net5.0-windows10.0.19041 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true /p:PublishTrimmed=true
 
       - name: Build & publish (v3.1) (framework dependant)
         run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/framework-dependent --configuration Release -f netcoreapp3.1
 
       - name: Build & publish (v3.1) (self contained - dependencies included)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-included --configuration Release -f netcoreapp3.1 -r win-x64 --self-contained
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-dependencies-included --configuration Release -f netcoreapp3.1 -r win-x64 --self-contained /p:PublishTrimmed=true
 
       - name: Build & publish (v3.1) (self contained - single file)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishTrimmed=true
 
       - name: Build & publish (v3.1) (self contained - single file ReadyToRun)
-        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
+        run: dotnet publish FacebookExportDatePhotoFixer/ -o FacebookExportDatePhotoFixer/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true /p:PublishTrimmed=true
 
       - name: Pack (v6.x) (framework dependant)
         run: Compress-Archive -Path FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/framework-dependent/* -DestinationPath FacebookExportDatePhotoFixer/bin/Publish/net6.0-windows10.0.19041/framework-dependent/Archive.zip -Force
