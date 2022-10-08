@@ -41,7 +41,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                 {
                     outputLogSubject.OnNext($"There is {totalMessagesCount} message, of which {json.Conversation.Messages.Count} with linked media" + "\n");
                 }
-            }
+        }
 
         private async Task ProcessJson(JsonFile json, CheckBox changeNameCheckbox)
         {
@@ -63,7 +63,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     while (queue.TryDequeue(out int number))
                     {
                         await ProcessMessage(json.Conversation.Messages[number], isChecked, outputLogUpdate);
-                    }
+            }
                 }));
             }
             await Task.WhenAll(tasks);
@@ -84,12 +84,12 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     ConcurrentQueue<int> _photosQueue = new ConcurrentQueue<int>(photosTasks);
 
                     for (int i = 0; i < _coresCount; i++)
-                    {
+                        {
                         _photosTasks.Add(Task.Run(async () => {
                             while (_photosQueue.TryDequeue(out int number))
                             {
                                 await ProcessPhoto(message.Photos[number], message.Date, isChecked, outputLogUpdate);
-                            }
+                        }
                         }));
                     }
                     await Task.WhenAll(_photosTasks);
@@ -108,7 +108,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                             while (_gifsQueue.TryDequeue(out int number))
                             {
                                 await ProcessGif(message.Gifs[number], message.Date, isChecked, outputLogUpdate);
-                            }
+                    }
                         }));
                     }
                     await Task.WhenAll(_gifTasks);
@@ -126,7 +126,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                             while (queue.TryDequeue(out int number))
                             {
                                 await ProcessVideo(message.Videos[number], message.Date, isChecked, outputLogUpdate);
-                            }
+                    }
                         }));
                     }
                     await Task.WhenAll(_videoTasks);
@@ -160,7 +160,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         if (photo.Uri.Contains("stickers_used"))
                         {
                             outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(photo.Uri)} is a sticker, skipping" + "\n");
-                            }
+                        }
                         else
                         {
                             DateTime dateNewName = date;
@@ -202,8 +202,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         if (photo.Uri.Contains("stickers_used"))
                         {
                             outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(photo.Uri)} is a sticker, skipping" + "\n");
-                            }
                         }
+                    }
                     break;
             }
         }
@@ -232,7 +232,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         if (gif.Uri.Contains("stickers_used"))
                         {
                             outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(gif.Uri)} is a sticker, skipping" + "\n");
-                            }
+                        }
                         else
                         {
                             DateTime dateNewName = date;
@@ -274,8 +274,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         if (gif.Uri.Contains("stickers_used"))
                         {
                             outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(gif.Uri)} is a sticker, skipping" + "\n");
-                            }
                         }
+                    }
                     break;
             }
         }
@@ -305,7 +305,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         if (video.Uri.Contains("stickers_used"))
                         {
                             outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(video.Uri)} is a sticker, skipping" + "\n");
-                            }
+                        }
                         else
                         {
                             DateTime dateNewName = date;
