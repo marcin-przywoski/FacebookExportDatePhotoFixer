@@ -45,6 +45,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
         private async Task ProcessJson(JsonFile json, CheckBox changeNameCheckbox)
         {
+            ConcurrentBag<string> outputLogUpdate = new ConcurrentBag<string>();
+
             bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
 
             outputLogSubject.OnNext("Processing : " + json.Location + "\n");
@@ -60,13 +62,16 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                 tasks.Add(Task.Run(async () => {
                     while (queue.TryDequeue(out int number))
                     {
-                        await ProcessMessage(json.Conversation.Messages[number], isChecked);
+                        await ProcessMessage(json.Conversation.Messages[number], isChecked, outputLogUpdate);
                     }
                 }));
             }
             await Task.WhenAll(tasks);
+
+            string update = string.Join("", outputLogUpdate);
+            outputLogSubject.OnNext(update);
         }
-        internal async Task ProcessMessage(Message message, bool? isChecked)
+        internal async Task ProcessMessage(Message message, bool? isChecked, ConcurrentBag<string> outputLogUpdate)
         {
             int _coresCount = Environment.ProcessorCount;
 
@@ -83,7 +88,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         _photosTasks.Add(Task.Run(async () => {
                             while (_photosQueue.TryDequeue(out int number))
                             {
-                                await ProcessPhoto(message.Photos[number], message.Date, isChecked);
+                                await ProcessPhoto(message.Photos[number], message.Date, isChecked, outputLogUpdate);
                             }
                         }));
                     }
@@ -102,7 +107,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         _gifTasks.Add(Task.Run(async () => {
                             while (_gifsQueue.TryDequeue(out int number))
                             {
-                                await ProcessGif(message.Gifs[number], message.Date, isChecked);
+                                await ProcessGif(message.Gifs[number], message.Date, isChecked, outputLogUpdate);
                             }
                         }));
                     }
@@ -120,7 +125,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                         _videoTasks.Add(Task.Run(async () => {
                             while (queue.TryDequeue(out int number))
                             {
-                                await ProcessVideo(message.Videos[number], message.Date, isChecked);
+                                await ProcessVideo(message.Videos[number], message.Date, isChecked, outputLogUpdate);
                             }
                         }));
                     }
@@ -129,7 +134,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
             }
         }
 
-        internal async Task ProcessPhoto(Photo photo,DateTime date, bool? isChecked)
+        internal async Task ProcessPhoto(Photo photo,DateTime date, bool? isChecked, ConcurrentBag<string> outputLogUpdate)
         {
             switch (isChecked)
             {
@@ -138,7 +143,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                             if (File.Exists(Location + photo.Uri))
                             {
-                            outputLogSubject.OnNext(photo.Uri + "\n");
+                            outputLogUpdate.Add(Location + photo.Uri + "\n");
 
                                 Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
                                 string fileDate = date.ToString("yyyyMMdd_HHmmss");
@@ -154,7 +159,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
                         if (photo.Uri.Contains("stickers_used"))
                         {
-                            outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(photo.Uri)} is a sticker, skipping" + "\n");
+                            outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(photo.Uri)} is a sticker, skipping" + "\n");
                             }
                         else
                         {
@@ -163,8 +168,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                             string newNameException = photo.Uri.Replace(Path.GetFileNameWithoutExtension(photo.Uri), dateToString);
                             while (File.Exists(Destination + newNameException))
                             {
-                                outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(photo.Uri)} file with same date as name already exists at target location!" + "\n");
-                                outputLogSubject.OnNext("Adding 1 second to filename to avoid I/O conflicts" + "\n");
+                                outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(photo.Uri)} file with same date as name already exists at target location!" + "\n");
+                                outputLogUpdate.Add("Adding 1 second to filename to avoid I/O conflicts" + "\n");
 
                                 dateNewName = dateNewName.AddSeconds(1);
                                 string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
@@ -184,7 +189,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (File.Exists(Location + photo.Uri))
                         {
-                            outputLogSubject.OnNext(photo.Uri + "\n");
+                            outputLogUpdate.Add(photo.Uri + "\n");
                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + photo.Uri));
                             File.Copy(Location + photo.Uri, Destination + photo.Uri);
                             File.SetCreationTime(Destination + photo.Uri, date);
@@ -196,14 +201,14 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (photo.Uri.Contains("stickers_used"))
                         {
-                            outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(photo.Uri)} is a sticker, skipping" + "\n");
+                            outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(photo.Uri)} is a sticker, skipping" + "\n");
                             }
                         }
                     break;
             }
         }
 
-        internal async Task ProcessGif(Gif gif, DateTime date, bool? isChecked)
+        internal async Task ProcessGif(Gif gif, DateTime date, bool? isChecked, ConcurrentBag<string> outputLogUpdate)
         {
             switch (isChecked)
             {
@@ -212,7 +217,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (File.Exists(Location + gif.Uri))
                         {
-                            outputLogSubject.OnNext(gif.Uri + "\n");
+                            outputLogUpdate.Add(gif.Uri + "\n");
                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
                             string fileDate = date.ToString("yyyyMMdd_HHmmss");
                             string newName = gif.Uri.Replace(Path.GetFileNameWithoutExtension(gif.Uri), fileDate);
@@ -226,7 +231,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (gif.Uri.Contains("stickers_used"))
                         {
-                            outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(gif.Uri)} is a sticker, skipping" + "\n");
+                            outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(gif.Uri)} is a sticker, skipping" + "\n");
                             }
                         else
                         {
@@ -235,8 +240,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                             string newNameException = gif.Uri.Replace(Path.GetFileNameWithoutExtension(gif.Uri), dateToString);
                             while (File.Exists(Destination + newNameException))
                             {
-                                outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(gif.Uri)} file with same date as name already exists at target location!" + "\n");
-                                outputLogSubject.OnNext("Adding 1 second to filename to avoid I/O conflicts" + "\n");
+                                outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(gif.Uri)} file with same date as name already exists at target location!" + "\n");
+                                outputLogUpdate.Add("Adding 1 second to filename to avoid I/O conflicts" + "\n");
 
                                 dateNewName = dateNewName.AddSeconds(1);
                                 string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
@@ -256,7 +261,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (File.Exists(Location + gif.Uri))
                         {
-                            outputLogSubject.OnNext(gif.Uri + "\n");
+                            outputLogUpdate.Add(gif.Uri + "\n");
                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + gif.Uri));
                             File.Copy(Location + gif.Uri, Destination + gif.Uri);
                             File.SetCreationTime(Destination + gif.Uri, date);
@@ -268,14 +273,14 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (gif.Uri.Contains("stickers_used"))
                         {
-                            outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(gif.Uri)} is a sticker, skipping" + "\n");
+                            outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(gif.Uri)} is a sticker, skipping" + "\n");
                             }
                         }
                     break;
             }
         }
 
-        internal async Task ProcessVideo(Video video, DateTime date, bool? isChecked)
+        internal async Task ProcessVideo(Video video, DateTime date, bool? isChecked, ConcurrentBag<string> outputLogUpdate)
         {
             switch (isChecked)
             {
@@ -284,7 +289,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (File.Exists(Location + video.Uri))
                         {
-                            outputLogSubject.OnNext(video.Uri + "\n");
+                            outputLogUpdate.Add(video.Uri + "\n");
                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
                             string fileDate = date.ToString("yyyyMMdd_HHmmss");
                             string newName = video.Uri.Replace(Path.GetFileNameWithoutExtension(video.Uri), fileDate);
@@ -299,7 +304,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
 
                         if (video.Uri.Contains("stickers_used"))
                         {
-                            outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(video.Uri)} is a sticker, skipping" + "\n");
+                            outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(video.Uri)} is a sticker, skipping" + "\n");
                             }
                         else
                         {
@@ -308,10 +313,8 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                             string newNameException = video.Uri.Replace(Path.GetFileNameWithoutExtension(video.Uri), dateToString);
                             while (File.Exists(Destination + newNameException))
                             {
-                                    //change adding seconds to appending "_1" to filename
-                                outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(video.Uri)} file with same date as name already exists at target location!" + "\n");
-                                outputLogSubject.OnNext("Adding 1 second to filename to avoid I/O conflicts" + "\n");
-
+                                outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(video.Uri)} file with same date as name already exists at target location!" + "\n");
+                                outputLogUpdate.Add("Adding 1 second to filename to avoid I/O conflicts" + "\n");
                                 dateNewName = dateNewName.AddSeconds(1);
                                 string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");
                                 newNameException = video.Uri.Replace(Path.GetFileNameWithoutExtension(video.Uri), dateFixed);
@@ -330,7 +333,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (File.Exists(Location + video.Uri))
                         {
-                            outputLogSubject.OnNext(video.Uri + "\n");
+                            outputLogUpdate.Add(video.Uri + "\n");
 
                             Directory.CreateDirectory(Path.GetDirectoryName(Destination + video.Uri));
                             File.Copy(Location + video.Uri, Destination + video.Uri);
@@ -343,7 +346,7 @@ namespace FacebookExportDatePhotoFixer.Data.JSON
                     {
                         if (video.Uri.Contains("stickers_used"))
                         {
-                            outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(video.Uri)} is a sticker, skipping" + "\n");
+                            outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(video.Uri)} is a sticker, skipping" + "\n");
                         }
                     }
                     break;

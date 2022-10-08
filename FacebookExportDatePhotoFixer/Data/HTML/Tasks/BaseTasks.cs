@@ -59,7 +59,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
 
 
-        private async Task ProcessHtml(HtmlFile html, CheckBox checkbox)
+        private async Task ProcessHtml(HtmlFile html, CheckBox checkbox, ConcurrentBag<string> outputLogUpdate)
         {
             bool? isChecked = checkbox.Dispatcher.Invoke(() => checkbox.IsChecked);
 
@@ -75,16 +75,19 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                 {
                     while (queue.TryDequeue(out int number))
                     {
-                        await ProcessMessage(html.ListOfMessages[number], isChecked);
+                        await ProcessMessage(html.ListOfMessages[number], isChecked, outputLogUpdate);
                     }
                 }));
             }
             await Task.WhenAll(tasks);
+
+            string update = string.Join("", outputLogUpdate);
+            outputLogSubject.OnNext(update);
         }
 
-        private Task ProcessMessage(Message message, bool? isChecked)
+        private Task ProcessMessage(Message message, bool? isChecked, ConcurrentBag<string> outputLogUpdate)
         {
-            outputLogSubject.OnNext($"Processing: {message.Link}" + "\n");
+            outputLogUpdate.Add($"Processing: {message.Link}" + "\n");
 
             try
             {
@@ -111,7 +114,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
             {
                 if (message.Link.Contains("stickers_used"))
                 {
-                    outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(message.Link)} is a sticker, skipping" + "\n");
+                    outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(message.Link)} is a sticker, skipping" + "\n");
                 }
                 else
                 {
@@ -121,8 +124,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
                     while (File.Exists(Destination + newNameException))
                     {
-                        outputLogSubject.OnNext($" {Path.GetFileNameWithoutExtension(message.Link)} file with same date as name already exists at target location!" + "\n");
-                        outputLogSubject.OnNext("Adding 1 second to filename to avoid I/O conflicts" + "\n");
+                        outputLogUpdate.Add($" {Path.GetFileNameWithoutExtension(message.Link)} file with same date as name already exists at target location!" + "\n");
+                        outputLogUpdate.Add("Adding 1 second to filename to avoid I/O conflicts" + "\n");
 
                         dateNewName = dateNewName.AddSeconds(1);
                         string dateFixed = dateNewName.ToString("yyyyMMdd_HHmmss");

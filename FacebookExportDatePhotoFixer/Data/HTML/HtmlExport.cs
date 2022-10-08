@@ -45,6 +45,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                     htmlDocument.Load(preferencesLocation);
                     string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
                     Language = new CultureInfo(locale, false);
+                outputLogSubject.OnNext("Export language : " + Language + "\n");
                 }
                 else if (File.Exists(Location + "/preferences/language_and_locale.html"))
                 {
@@ -53,12 +54,13 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                     htmlDocument.Load(preferencesLocation);
                     string locale = htmlDocument.DocumentNode.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]").InnerText;
                     Language = new CultureInfo(locale, false);
+                outputLogSubject.OnNext("Export language : " + Language + "\n");
                 }
         }
 
         public async Task GetExportFiles()
         {
-            outputLogSubject.OnNext("Export language : " + Language + "\n");
+
 
                 List<string> listOfHtml = new List<string>();
                 string messagesLocation = Location + "/messages/archived_threads/";
@@ -104,6 +106,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                                         }
                 }));
                                     }
+
             await Task.WhenAll(tasks);
 
                 HtmlList.RemoveAll(s => s.ListOfMessages.Count == 0);
@@ -111,6 +114,8 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
 
         public async Task ProcessExportFiles(CheckBox changeNameCheckbox)
         {
+            ConcurrentBag<string> outputLogUpdate = new ConcurrentBag<string>();
+
                         bool? isChecked = changeNameCheckbox.Dispatcher.Invoke(() => changeNameCheckbox.IsChecked);
 
             List<int> numTasks = new List<int>();
@@ -125,7 +130,7 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                             {
                     while (queue.TryDequeue(out int number))
                                 {
-                        await ProcessHtml(HtmlList[number], changeNameCheckbox);
+                        await ProcessHtml(HtmlList[number], changeNameCheckbox, outputLogUpdate);
                                 }
                 }));
                             }
