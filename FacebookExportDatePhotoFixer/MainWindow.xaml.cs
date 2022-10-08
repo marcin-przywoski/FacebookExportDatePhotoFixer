@@ -97,7 +97,7 @@ namespace FacebookExportDatePhotoFixer
                     await Dispatcher.InvokeAsync(() =>
                     {
                         File.WriteAllTextAsync(destination + "log.txt", OutputLog.Text);
-                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}." + "\n" + "Log saved to {destination} log.txt");
+                        OutputLog.AppendText($"Time elapsed total: {stopwatch.Elapsed:g}." + "\n" + $"Log saved to {destination} log.txt");
                     });
                 }
                 else if (CheckExportType(exportLocation) == "html")
