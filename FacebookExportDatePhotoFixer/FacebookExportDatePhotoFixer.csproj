@@ -9,6 +9,7 @@
 		<FileVersion>$(Version)</FileVersion>
 		<RepositoryUrl>https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer</RepositoryUrl>
 		<RepositoryType>public</RepositoryType>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0-windows|AnyCPU'">
