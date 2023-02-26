@@ -11,7 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using FacebookExportDatePhotoFixer.Interfaces;
-using HtmlAgilityPack;
+using AngleSharp.Html.Parser;
+using AngleSharp.XPath;
 
 namespace FacebookExportDatePhotoFixer.Data.HTML
 {
@@ -41,18 +42,20 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
                 if (File.Exists(Location + "/about_you/preferences.html"))
                 {
                     string preferencesLocation = Location + "/about_you/preferences.html";
-                    HtmlDocument htmlDocument = new HtmlDocument();
-                    htmlDocument.Load(preferencesLocation);
-                    string locale = htmlDocument.DocumentNode.SelectSingleNode("/ html / body / div / div / div / div[2] / div[2] / div / div[3] / div / div[2] / div[1] / div[2] / div / div / div / div[1] / div[3]").InnerText;
-                    Language = new CultureInfo(locale, false);
+                string preferences = await File.ReadAllTextAsync(preferencesLocation);
+                var parser = new HtmlParser();
+                var document = parser.ParseDocument(preferences);
+                string locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]").TextContent.Trim();
+                Language = new CultureInfo(locale, false);
                 outputLogSubject.OnNext("Export language : " + Language + "\n");
                 }
                 else if (File.Exists(Location + "/preferences/language_and_locale.html"))
                 {
                     string preferencesLocation = Location + "/preferences/language_and_locale.html";
-                    HtmlDocument htmlDocument = new HtmlDocument();
-                    htmlDocument.Load(preferencesLocation);
-                    string locale = htmlDocument.DocumentNode.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]").InnerText;
+                string preferences = await File.ReadAllTextAsync(preferencesLocation);
+                var parser = new HtmlParser();
+                var document = parser.ParseDocument(preferences);
+                string locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]").TextContent.Trim();
                     Language = new CultureInfo(locale, false);
                 outputLogSubject.OnNext("Export language : " + Language + "\n");
                 }
