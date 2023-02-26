@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
-using FacebookExportDatePhotoFixer.Data.JSON;
-using FacebookExportDatePhotoFixer.Data.JSON.Entities;
 using AngleSharp.Html.Parser;
 using AngleSharp.Dom;
 using AngleSharp.XPath;
