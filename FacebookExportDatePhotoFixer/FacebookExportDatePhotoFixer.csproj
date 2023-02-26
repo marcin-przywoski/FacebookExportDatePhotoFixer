@@ -4,7 +4,7 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net5.0-windows10.0.19041;netcoreapp3.1;net6.0-windows10.0.19041</TargetFrameworks>
 		<UseWPF>true</UseWPF>
-		<Version>0.04.10</Version>
+		<Version>0.05.00</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
 		<RepositoryUrl>https://github.com/marcin-przywoski/FacebookExportDatePhotoFixer</RepositoryUrl>
