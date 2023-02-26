@@ -10,7 +10,10 @@ using System.Windows.Documents;
 using System.Xml.Linq;
 using FacebookExportDatePhotoFixer.Data.JSON;
 using FacebookExportDatePhotoFixer.Data.JSON.Entities;
-using HtmlAgilityPack;
+using AngleSharp.Html.Parser;
+using AngleSharp.Dom;
+using AngleSharp.XPath;
+using AngleSharp.Html.Dom;
 
 namespace FacebookExportDatePhotoFixer.Data.HTML
 {
@@ -20,40 +23,43 @@ namespace FacebookExportDatePhotoFixer.Data.HTML
         {
             outputLogSubject.OnNext($"Getting messeges from: {html.Location}" + "\n");
 
-            HtmlDocument htmlDocument = new HtmlDocument();
-            htmlDocument.Load(html.Location);
+            string source = await File.ReadAllTextAsync(html.Location);
+            var parser = new HtmlParser();
+            var document = parser.ParseDocument(source);
+            var divs = document.Body.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
 
-            HtmlNodeCollection divs = htmlDocument.DocumentNode.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
-
-            foreach (HtmlNode node in divs)
+            foreach (INode node in divs)
             {
-                if (node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText != "")
+                if ((node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent != "" ))
                 {
-                    if (node.SelectSingleNode(".//a[@href]") != null)
+                    if (node.Descendents().OfType<IHtmlAnchorElement>().Any())
                     {
-                        string href = node.SelectSingleNode(".//a[@href]").GetAttributeValue("href", string.Empty);
-
-                        if (!href.StartsWith("http") || !href.StartsWith("https"))
+                        if ((node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href") != "")
                         {
-                            if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
+                            string href = (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href");
+
+                            if (!href.StartsWith("http") || !href.StartsWith("https"))
                             {
-
-                                DateTime date = Convert.ToDateTime(node.SelectSingleNode(".//div[@class='_3-94 _2lem']").InnerText, Language);
-
-                                if (File.Exists(Location + href))
+                                if (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4"))
                                 {
-                                    html.ListOfMessages.Add(new Message(date, href));
+                                    string divDate = node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent;
+
+                                    DateTime date = Convert.ToDateTime(divDate, Language);
+
+                                    if (File.Exists(Location + href))
+                                    {
+                                        html.ListOfMessages.Add(new Message(date, href));
+                                    }
                                 }
                             }
                         }
                     }
+
                 }
             }
-            divs = null;
-
-                if (html.ListOfMessages.Count != 0)
-                {
-                   outputLogSubject.OnNext($"There is {html.MessagesCount} of messages with linked media" + "\n");
+            if (html.ListOfMessages.Count != 0)
+            {
+                outputLogSubject.OnNext($"There is {html.MessagesCount} of messages with linked media" + "\n");
             }
         }
 
